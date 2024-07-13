@@ -15,6 +15,7 @@ class Space {
 		this.element.classList.remove("one-dot");
 		this.element.classList.remove("two-dots");
 		this.element.classList.remove("three-dots");
+		this.element.classList.remove("four-dots");
 		for (let i = 1; i <= value; i++) {
 			const dot = document.createElement('div');
 			dot.classList.add('dot');
@@ -62,5 +63,6 @@ class Space {
 		increase(this.x + 1, this.y);
 		increase(this.x - 1, this.y);
 		this.setValue(0);
+		this.willSplitNextCycle = false;
 	}
 }

@@ -39,7 +39,7 @@ body, html {
 }
 
 
-.one-dot, .two-dots, .three-dots {
+.one-dot, .two-dots, .three-dots, .four-dots {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -72,3 +72,23 @@ body, html {
 	transform: translateY(-8.66025403784px);
 }	
 
+.four-dots .dot {
+	position: fixed;
+	display: inline-block;
+}
+
+.four-dots .dot:nth-child(1) {
+	transform: translate(-10px, -10px);
+}	
+
+.four-dots .dot:nth-child(2) {
+	transform: translate(-10px, 10px);
+}
+
+.four-dots .dot:nth-child(3) {
+	transform: translate(10px, -10px);
+}
+
+.four-dots .dot:nth-child(4) {
+	transform: translate(10px, 10px);
+}				
