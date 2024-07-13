@@ -10,6 +10,9 @@ class Space {
 	}
 
 	setValue(value) {
+		if (value > 4 || value < 0) {
+			throw new Error("Parameter is not a valid value.")
+		}
 		this.value = value;
 		this.element.textContent = "";
 		this.element.classList.remove("one-dot");
@@ -51,7 +54,6 @@ class Space {
 			try {
 				this.parentBoard[y][x].setPlayer(this.player);
 				this.parentBoard[y][x].increase();
-				console.log(this.player);
 			} catch (error) {
 				if (!(error instanceof TypeError)) {
 					console.error('Unexpected error:', error);

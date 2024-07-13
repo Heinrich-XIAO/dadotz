@@ -2,7 +2,7 @@
 const boardWidth = 7;
 const boardHeight = 7;
 const cycleDelay = 500;
-const playerCount = 2;
+const playerCount = 4;
 const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"];
 const players = [];
 for (let i = 0; i < playerCount; i++) {
@@ -21,19 +21,25 @@ let playerCanGo = true;
 
 const containerDiv = document.getElementById("container");
 
-
-const cycle = async () => {
+const checkIfCanSplit = (board) => {
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
-			if (board[i][j].willSplitNextCycle) { // 1 is subtracted from turnCount because in spaceOnClick, the turnCount is increased before the turn technically ends.
-				board[i][j].split();
-				playerCanGo = true;
-				for (let i = 0; i < boardHeight; i++) {
-					for (let j = 0; j < boardWidth; j++) {
-						if (board[i][j].willSplitNextCycle) { // 1 is subtracted from turnCount because in spaceOnClick, the turnCount is increased before the turn technically ends.
-							playerCanGo = false;
-						}
-					}
+			if (board[i][j].willSplitNextCycle) {
+				return [j,i];
+			}
+		}
+	}
+	return false;
+};
+
+const cycle = () => {
+	for (let i = 0; i < boardHeight; i++) {
+		for (let j = 0; j < boardWidth; j++) {
+			if (board[i][j].willSplitNextCycle) {
+				while (checkIfCanSplit(board)) {
+					const [x, y] = checkIfCanSplit(board);
+					board[y][x].split();
+					playerCanGo = !checkIfCanSplit(board);
 				}
 
 				if (playerCanGo) {
@@ -45,7 +51,7 @@ const cycle = async () => {
 			}
 		}
 	}
-}
+};
 
 const spaceOnClick = (space) => {
 	if (!playerCanGo) {
