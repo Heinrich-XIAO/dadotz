@@ -1,7 +1,7 @@
 // Constant definitions
 const boardWidth = 7;
 const boardHeight = 7;
-const cycleDelay = 750;
+const cycleDelay = 500;
 const playerCount = 2;
 const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"];
 const players = [];
@@ -27,22 +27,23 @@ const cycle = async () => {
 		for (let j = 0; j < boardWidth; j++) {
 			if (board[i][j].willSplitNextCycle) { // 1 is subtracted from turnCount because in spaceOnClick, the turnCount is increased before the turn technically ends.
 				board[i][j].split();
-				setTimeout(cycle, cycleDelay); 
+				playerCanGo = true;
+				for (let i = 0; i < boardHeight; i++) {
+					for (let j = 0; j < boardWidth; j++) {
+						if (board[i][j].willSplitNextCycle) { // 1 is subtracted from turnCount because in spaceOnClick, the turnCount is increased before the turn technically ends.
+							playerCanGo = false;
+						}
+					}
+				}
+
+				if (playerCanGo) {
+					containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
+				} else {
+					setTimeout(cycle, cycleDelay); 
+				}
+				return;
 			}
 		}
-	}
-
-	playerCanGo = true;
-	for (let i = 0; i < boardHeight; i++) {
-		for (let j = 0; j < boardWidth; j++) {
-			if (board[i][j].willSplitNextCycle) { // 1 is subtracted from turnCount because in spaceOnClick, the turnCount is increased before the turn technically ends.
-				playerCanGo = false;
-			}
-		}
-	}
-
-	if (playerCanGo) {
-		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	}
 }
 
@@ -60,11 +61,13 @@ const spaceOnClick = (space) => {
 		space.setPlayer(currentPlayer);
 		space.setValue(3);
 		turnCount++;
+		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	}
-
 	if (space.willSplitNextCycle) {
 		playerCanGo = false;
 		setTimeout(cycle, cycleDelay);
+	} else {
+		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	}
 };
 
