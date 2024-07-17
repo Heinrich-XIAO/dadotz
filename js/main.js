@@ -53,6 +53,20 @@ const cycle = () => {
 	}
 };
 
+const isStillPlaying = (playerId) => {
+	if (turnCount <= playerCount) {
+		return true;
+	}
+	for (let i = 0; i < boardHeight; i++) {
+		for (let j = 0; j < boardWidth; j++) {
+			if (board[i][j].player.playerId == playerId) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 const spaceOnClick = (space) => {
 	if (!playerCanGo) {
 		return;
@@ -62,11 +76,17 @@ const spaceOnClick = (space) => {
 	if (space.player.playerId === currentPlayer.playerId ) {
 		space.increase();
 		turnCount++;
+		while (!isStillPlaying(currentPlayer.playerId)) {
+			turnCount++;
+		}
 	}
 	if (turnCount < playerCount && space.player.playerId === -1) {
 		space.setPlayer(currentPlayer);
 		space.setValue(3);
 		turnCount++;
+		while (!isStillPlaying(currentPlayer.playerId)) {
+			turnCount++;
+		}
 		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	}
 	if (space.willSplitNextCycle) {
