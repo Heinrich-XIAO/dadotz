@@ -2,20 +2,21 @@
 const boardWidth = 7;
 const boardHeight = 7;
 const cycleDelay = 500;
-const playerCount = 4;
+const playerCount = 2;
 const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"];
 const players = [];
 for (let i = 0; i < playerCount; i++) {
-	players.push({playerId: i, playerColor: playerColors[i]});
+	players.push({ playerId: i, playerColor: playerColors[i] });
 }
 
 const board = Array.from({ length: boardHeight }, (_, row) => Array.from({ length: boardWidth }, (_, col) => new Space(col, row)));
 board.forEach((row, rowIndex) => {
-  row.forEach((space, colIndex) => {
-    space.parentBoard = board;
-  });
+	row.forEach((space, colIndex) => {
+		space.parentBoard = board;
+	});
 });
 
+let actingPlayer = players[0];
 let turnCount = 0;
 let playerCanGo = true;
 
@@ -25,7 +26,7 @@ const checkIfCanSplit = (board) => {
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
 			if (board[i][j].willSplitNextCycle) {
-				return [j,i];
+				return [j, i];
 			}
 		}
 	}
@@ -33,24 +34,34 @@ const checkIfCanSplit = (board) => {
 };
 
 const cycle = () => {
+	const currentPlayer = players[(turnCount-1) % playerCount];
+	const squaresToSplit = [];
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
-			if (board[i][j].willSplitNextCycle) {
-				while (checkIfCanSplit(board)) {
-					const [x, y] = checkIfCanSplit(board);
-					board[y][x].split();
-					playerCanGo = !checkIfCanSplit(board);
-				}
+			const square = board[i][j];
+			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
+				squaresToSplit.push(square);
+			}
+		}
+	}
 
-				if (playerCanGo) {
-					containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
-				} else {
-					setTimeout(cycle, cycleDelay); 
-				}
+	for (let i = 0; i < squaresToSplit.length; i++) {
+		const square = squaresToSplit[i];
+		square.split();
+	}
+
+	for (let i = 0; i < boardHeight; i++) {
+		for (let j = 0; j < boardWidth; j++) {
+			const square = board[i][j];
+			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
+				setTimeout(cycle, cycleDelay);
 				return;
 			}
 		}
 	}
+	playerCanGo = true;
+	containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
+	actingPlayer = players[turnCount%playerCount];
 };
 
 const isStillPlaying = (playerId) => {
@@ -71,9 +82,9 @@ const spaceOnClick = (space) => {
 	if (!playerCanGo) {
 		return;
 	}
-	const currentPlayer = players[turnCount%playerCount];
+	const currentPlayer = players[turnCount % playerCount];
 	console.log(`${space.x},${space.y} clicked.`);
-	if (space.player.playerId === currentPlayer.playerId ) {
+	if (space.player.playerId === currentPlayer.playerId) {
 		space.increase();
 		turnCount++;
 		while (!isStillPlaying(currentPlayer.playerId)) {
@@ -87,13 +98,15 @@ const spaceOnClick = (space) => {
 		while (!isStillPlaying(currentPlayer.playerId)) {
 			turnCount++;
 		}
-		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
+		containerDiv.style.backgroundColor = players[turnCount % playerCount].playerColor;
+		actingPlayer = players[turnCount%playerCount];
 	}
 	if (space.willSplitNextCycle) {
 		playerCanGo = false;
 		setTimeout(cycle, cycleDelay);
 	} else {
-		containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
+		containerDiv.style.backgroundColor = players[turnCount % playerCount].playerColor;
+		actingPlayer = players[turnCount%playerCount];
 	}
 };
 
@@ -118,7 +131,7 @@ const initializeBoard = () => {
 	}
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
-			board[i][j].element.addEventListener("click", ()=>spaceOnClick(board[i][j]));
+			board[i][j].element.addEventListener("click", () => spaceOnClick(board[i][j]));
 		}
 	}
 }

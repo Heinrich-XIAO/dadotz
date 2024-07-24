@@ -10,7 +10,7 @@ class Space {
 	}
 
 	setValue(value) {
-		if (value > 4 || value < 0) {
+		if (value < 0) {
 			throw new Error("Parameter is not a valid value.")
 		}
 		this.value = value;
@@ -32,7 +32,7 @@ class Space {
 			this.element.classList.add('two-dots');
 		} else if (value === 3) {
 			this.element.classList.add('three-dots');
-		} else if (value == 4) {
+		} else if (value >= 4) {
 			this.element.classList.add('four-dots');
 			this.willSplitNextCycle = true;
 		} else if (this.value == 0) {
