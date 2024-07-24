@@ -1,13 +1,10 @@
 // Constant definitions
 const boardWidth = 7;
 const boardHeight = 7;
-const cycleDelay = 500;
-const playerCount = 2;
+const cycleDelay = 250;
 const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"];
 const players = [];
-for (let i = 0; i < playerCount; i++) {
-	players.push({ playerId: i, playerColor: playerColors[i] });
-}
+
 
 const board = Array.from({ length: boardHeight }, (_, row) => Array.from({ length: boardWidth }, (_, col) => new Space(col, row)));
 board.forEach((row, rowIndex) => {
@@ -16,22 +13,23 @@ board.forEach((row, rowIndex) => {
 	});
 });
 
+// Global variable variables
 let actingPlayer = players[0];
 let turnCount = 0;
 let playerCanGo = true;
+let playerCount = 2;
+let turnStartTime;
 
-const containerDiv = document.getElementById("container");
+// Grab HTML stuff
+const boardElement = document.getElementById("board");
+const containerElement = document.getElementById("container");
+const playerCountForm = document.getElementById("playerCountChoices");
 
-const checkIfCanSplit = (board) => {
-	for (let i = 0; i < boardHeight; i++) {
-		for (let j = 0; j < boardWidth; j++) {
-			if (board[i][j].willSplitNextCycle) {
-				return [j, i];
-			}
-		}
-	}
-	return false;
-};
+const setToNextPlayer = () => {
+	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
+	actingPlayer = players[turnCount%playerCount];
+	playerCanGo = true;
+}
 
 const cycle = () => {
 	const currentPlayer = players[(turnCount-1) % playerCount];
@@ -59,9 +57,7 @@ const cycle = () => {
 			}
 		}
 	}
-	playerCanGo = true;
-	containerDiv.style.backgroundColor = players[turnCount%playerCount].playerColor;
-	actingPlayer = players[turnCount%playerCount];
+	setToNextPlayer()
 };
 
 const isStillPlaying = (playerId) => {
@@ -98,20 +94,17 @@ const spaceOnClick = (space) => {
 		while (!isStillPlaying(currentPlayer.playerId)) {
 			turnCount++;
 		}
-		containerDiv.style.backgroundColor = players[turnCount % playerCount].playerColor;
-		actingPlayer = players[turnCount%playerCount];
+		setToNextPlayer()
 	}
 	if (space.willSplitNextCycle) {
 		playerCanGo = false;
 		setTimeout(cycle, cycleDelay);
 	} else {
-		containerDiv.style.backgroundColor = players[turnCount % playerCount].playerColor;
-		actingPlayer = players[turnCount%playerCount];
+		setToNextPlayer();
 	}
 };
 
 const initializeBoard = () => {
-	const boardElement = document.getElementById("board");
 	const baseGridItem = document.createElement("div");
 
 	baseGridItem.classList.add("gridSpace");
@@ -134,6 +127,15 @@ const initializeBoard = () => {
 			board[i][j].element.addEventListener("click", () => spaceOnClick(board[i][j]));
 		}
 	}
+}
+
+const start = (playerCountArg) => {
+	playerCount = playerCountArg;
+	for (let i = 0; i < playerCount; i++) {
+		players.push({ playerId: i, playerColor: playerColors[i] });
+	}
+	boardElement.style.display = "inline-flex";
+	playerCountForm.style.display = "none";
 }
 
 

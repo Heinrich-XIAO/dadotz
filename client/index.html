@@ -4,7 +4,6 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Da Dotz</title>
-  	<script src="https://cdn.tailwindcss.com"></script>
 		<script type="text/javascript">
 			(function(c,l,a,r,i,t,y){
 					c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -17,8 +16,13 @@
 		</style>
 	<body>
 		<div id="container">
-			<div id="board">
+			<div id="board" style="display:none">
 
+			</div>
+			<div id="playerCountChoices">
+				<button class="playerCountOption" onclick="start(2)">2 Player</button>
+				<button class="playerCountOption" onclick="start(3)">3 Player</button>
+				<button class="playerCountOption" onclick="start(4)">4 Player</button>
 			</div>
 		</div>
 
