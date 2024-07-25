@@ -28,7 +28,7 @@ const startPosSelect = document.getElementById("startPosSelect");
 
 
 const setToNextPlayer = () => {
-	while (!isStillPlaying(turnCount%playerCount)) {
+	while (!isStillPlaying(board, turnCount%playerCount)) {
 		turnCount++;
 	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
@@ -65,19 +65,13 @@ const cycle = () => {
 	setToNextPlayer()
 };
 
-const isStillPlaying = (playerId) => {
-	if (isCustom && turnCount <= playerCount) {
-		return true;
-	}
-	for (let i = 0; i < boardHeight; i++) {
-		for (let j = 0; j < boardWidth; j++) {
-			if (board[i][j].player.playerId == playerId) {
-				return true;
-			}
-		}
-	}
-	return false;
+const isStillPlaying = (board, playerId) => {
+  if (isCustom && turnCount <= playerCount) {
+    return true;
+  }
+  return board.some(row => row.some(cell => cell.player.playerId === playerId));
 }
+
 
 const spaceOnClick = (space) => {
 	if (!playerCanGo) {
@@ -88,7 +82,7 @@ const spaceOnClick = (space) => {
 	if (space.player.playerId === currentPlayer.playerId) {
 		space.increase();
 		turnCount++;
-		while (!isStillPlaying(currentPlayer.playerId)) {
+		while (!isStillPlaying(board, currentPlayer.playerId)) {
 			turnCount++;
 		}
 	}
@@ -133,6 +127,7 @@ const initializeBoard = () => {
 
 const initializeBoardVariant = (variant) => {
 	if (variant != "custom") isCustom = false;
+	else isCustom = true;
 	if (variant == "pickaxe") {
 		board[1][1].player = structuredClone(players[0]);
 		board[1][1].split();
