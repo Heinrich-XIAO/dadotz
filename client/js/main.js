@@ -25,7 +25,11 @@ const boardElement = document.getElementById("board");
 const containerElement = document.getElementById("container");
 const playerCountForm = document.getElementById("playerCountChoices");
 
+
 const setToNextPlayer = () => {
+	while (!playerIsStillPlaying()) {
+		turnCount++;
+	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
 	playerCanGo = true;
@@ -91,10 +95,7 @@ const spaceOnClick = (space) => {
 		space.setPlayer(currentPlayer);
 		space.setValue(3);
 		turnCount++;
-		while (!isStillPlaying(currentPlayer.playerId)) {
-			turnCount++;
-		}
-		setToNextPlayer()
+		setToNextPlayer();
 	}
 	if (space.willSplitNextCycle) {
 		playerCanGo = false;
