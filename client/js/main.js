@@ -27,7 +27,7 @@ const playerCountForm = document.getElementById("playerCountChoices");
 
 
 const setToNextPlayer = () => {
-	while (!playerIsStillPlaying()) {
+	while (!isStillPlaying(turnCount%playerCount)) {
 		turnCount++;
 	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
