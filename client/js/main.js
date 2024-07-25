@@ -18,12 +18,13 @@ let actingPlayer = players[0];
 let turnCount = 0;
 let playerCanGo = true;
 let playerCount = 2;
-let turnStartTime;
+let isCustom;
 
 // Grab HTML stuff
 const boardElement = document.getElementById("board");
 const containerElement = document.getElementById("container");
 const playerCountForm = document.getElementById("playerCountChoices");
+const startPosSelect = document.getElementById("startPosSelect");
 
 
 const setToNextPlayer = () => {
@@ -65,7 +66,7 @@ const cycle = () => {
 };
 
 const isStillPlaying = (playerId) => {
-	if (turnCount <= playerCount) {
+	if (isCustom && turnCount <= playerCount) {
 		return true;
 	}
 	for (let i = 0; i < boardHeight; i++) {
@@ -91,7 +92,7 @@ const spaceOnClick = (space) => {
 			turnCount++;
 		}
 	}
-	if (turnCount < playerCount && space.player.playerId === -1) {
+	if (isCustom && turnCount < playerCount && space.player.playerId === -1) {
 		space.setPlayer(currentPlayer);
 		space.setValue(3);
 		turnCount++;
@@ -130,6 +131,52 @@ const initializeBoard = () => {
 	}
 }
 
+const initializeBoardVariant = (variant) => {
+	if (variant != "custom") isCustom = false;
+	if (variant == "pickaxe") {
+		board[1][1].player = structuredClone(players[0]);
+		board[1][1].split();
+		board[0][1].split();
+		board[1][0].split();
+
+		board[boardWidth-2][boardHeight-2].player = structuredClone(players[1]);
+		board[boardWidth-2][boardHeight-2].split();
+		board[boardWidth-1][boardHeight-2].split();
+		board[boardWidth-2][boardHeight-1].split();
+
+		if (playerCount >= 3) {
+			board[boardWidth-2][1].player = structuredClone(players[2]);
+			board[boardWidth-2][1].split();
+			board[boardWidth-1][1].split();
+			board[boardWidth-2][0].split();
+		}
+
+		if (playerCount >= 4) {
+			board[1][boardHeight-2].player = structuredClone(players[3]);
+			board[1][boardHeight-2].split();
+			board[0][boardHeight-2].split();
+			board[1][boardHeight-1].split();
+		}
+	}
+	if (variant == "corners") {
+		board[1][1].player = structuredClone(players[0]);
+		board[1][1].split();
+
+		board[boardWidth-2][boardHeight-2].player = structuredClone(players[1]);
+		board[boardWidth-2][boardHeight-2].split();
+
+		if (playerCount >= 3) {
+			board[boardWidth-2][1].player = structuredClone(players[2]);
+			board[boardWidth-2][1].split();
+		}
+
+		if (playerCount >= 4) {
+			board[1][boardHeight-2].player = structuredClone(players[3]);
+			board[1][boardHeight-2].split();
+		}
+	}
+}
+
 const start = (playerCountArg) => {
 	playerCount = playerCountArg;
 	for (let i = 0; i < playerCount; i++) {
@@ -137,6 +184,7 @@ const start = (playerCountArg) => {
 	}
 	boardElement.style.display = "inline-flex";
 	playerCountForm.style.display = "none";
+	initializeBoardVariant(startPosSelect.value);
 }
 
 

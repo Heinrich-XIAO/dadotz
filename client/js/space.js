@@ -35,6 +35,7 @@ class Space {
 		} else if (value >= 4) {
 			this.element.classList.add('four-dots');
 			this.willSplitNextCycle = true;
+			this.value = 4;
 		} else if (this.value == 0) {
 			this.player.playerId = -1;
 			this.player.playerColor = "#000";
