@@ -7,17 +7,13 @@ const players = [];
 
 
 const board = Array.from({ length: boardHeight }, (_, row) => Array.from({ length: boardWidth }, (_, col) => new Space(col, row)));
-board.forEach((row, rowIndex) => {
-	row.forEach((space, colIndex) => {
-		space.parentBoard = board;
-	});
-});
 
 // Global variable variables
 let actingPlayer = players[0];
 let turnCount = 0;
 let playerCanGo = true;
 let playerCount = 2;
+let isAI = false;
 let isCustom;
 
 // Grab HTML stuff
@@ -30,18 +26,25 @@ const startPosSelect = document.getElementById("startPosSelect");
 const setToNextPlayer = () => {
 	while (!isStillPlaying(board, turnCount%playerCount)) {
 		turnCount++;
+	}	
+	if (isAI && turnCount%playerCount == 1) {
+		playerCanGo = false;
+		const move = aiGetMove(board, 1, players[turnCount%playerCount]);
+		move.increase();
+		turnCount++;
+		cycle(board, true, false);
 	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
 	playerCanGo = true;
+	
 }
 
-const cycle = () => {
-	const currentPlayer = players[(turnCount-1) % playerCount];
+const cycle = (boardArg=board, delay=true, changePlayer=true, currentPlayer=players[(turnCount-1) % playerCount]) => {
 	const squaresToSplit = [];
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
-			const square = board[i][j];
+			const square = boardArg[i][j];
 			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
 				squaresToSplit.push(square);
 			}
@@ -50,19 +53,20 @@ const cycle = () => {
 
 	for (let i = 0; i < squaresToSplit.length; i++) {
 		const square = squaresToSplit[i];
-		square.split();
+		square.split(boardArg);
 	}
 
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
-			const square = board[i][j];
+			const square = boardArg[i][j];
 			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
-				setTimeout(cycle, cycleDelay);
-				return;
+				if (delay) setTimeout(cycle, cycleDelay);
+				else return cycle(boardArg, false, false) + squaresToSplit.length;
 			}
 		}
 	}
-	setToNextPlayer()
+	if (changePlayer) setToNextPlayer();
+	return squaresToSplit.length;
 };
 
 const isStillPlaying = (board, playerId) => {
@@ -78,7 +82,6 @@ const spaceOnClick = (space) => {
 		return;
 	}
 	const currentPlayer = players[turnCount % playerCount];
-	console.log(`${space.x},${space.y} clicked.`);
 	if (space.player.playerId === currentPlayer.playerId) {
 		space.increase();
 		turnCount++;
@@ -130,56 +133,61 @@ const initializeBoardVariant = (variant) => {
 	else isCustom = true;
 	if (variant == "pickaxe") {
 		board[1][1].player = structuredClone(players[0]);
-		board[1][1].split();
-		board[0][1].split();
-		board[1][0].split();
+		board[1][1].split(board);
+		board[0][1].split(board);
+		board[1][0].split(board);
 
 		board[boardWidth-2][boardHeight-2].player = structuredClone(players[1]);
-		board[boardWidth-2][boardHeight-2].split();
-		board[boardWidth-1][boardHeight-2].split();
-		board[boardWidth-2][boardHeight-1].split();
+		board[boardWidth-2][boardHeight-2].split(board);
+		board[boardWidth-1][boardHeight-2].split(board);
+		board[boardWidth-2][boardHeight-1].split(board);
 
 		if (playerCount >= 3) {
 			board[boardWidth-2][1].player = structuredClone(players[2]);
-			board[boardWidth-2][1].split();
-			board[boardWidth-1][1].split();
-			board[boardWidth-2][0].split();
+			board[boardWidth-2][1].split(board);
+			board[boardWidth-1][1].split(board);
+			board[boardWidth-2][0].split(board);
 		}
 
 		if (playerCount >= 4) {
 			board[1][boardHeight-2].player = structuredClone(players[3]);
-			board[1][boardHeight-2].split();
-			board[0][boardHeight-2].split();
-			board[1][boardHeight-1].split();
+			board[1][boardHeight-2].split(board);
+			board[0][boardHeight-2].split(board);
+			board[1][boardHeight-1].split(board);
 		}
 	}
 	if (variant == "corners") {
 		board[1][1].player = structuredClone(players[0]);
-		board[1][1].split();
+		board[1][1].split(board);
 
 		board[boardWidth-2][boardHeight-2].player = structuredClone(players[1]);
-		board[boardWidth-2][boardHeight-2].split();
+		board[boardWidth-2][boardHeight-2].split(board);
 
 		if (playerCount >= 3) {
 			board[boardWidth-2][1].player = structuredClone(players[2]);
-			board[boardWidth-2][1].split();
+			board[boardWidth-2][1].split(board);
 		}
 
 		if (playerCount >= 4) {
 			board[1][boardHeight-2].player = structuredClone(players[3]);
-			board[1][boardHeight-2].split();
+			board[1][boardHeight-2].split(board);
 		}
 	}
 }
 
 const start = (playerCountArg) => {
 	playerCount = playerCountArg;
+	if (playerCount == 1) {
+		isAI = true;
+		playerCount = 2;
+	}
 	for (let i = 0; i < playerCount; i++) {
 		players.push({ playerId: i, playerColor: playerColors[i] });
 	}
 	boardElement.style.display = "inline-flex";
 	playerCountForm.style.display = "none";
 	initializeBoardVariant(startPosSelect.value);
+
 }
 
 
