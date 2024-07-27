@@ -24,6 +24,19 @@ const boardOptionsForm = document.getElementById("boardOptions");
 const startPosSelect = document.getElementById("startPosSelect");
 const gameOverScreen = document.getElementById("gameOverScreen");
 const gameOverText = document.getElementById("gameOverText");
+const rematches = document.querySelectorAll('.rematch');
+
+const reset = (boardArg) => {
+	for (let i = 0; i < boardHeight; i++) {
+		for (let j = 0; j < boardWidth; j++) {
+			boardArg[i][j].value = 0;
+		}
+	}
+	turnCount = 0;
+	playerCanGo = true;
+	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
+	actingPlayer = players[turnCount%playerCount];
+};
 
 const hasWon = (board) => {
 	let playersStillPlaying = 0;
@@ -143,6 +156,7 @@ const spaceOnClick = (space) => {
 };
 
 const initializeBoard = () => {
+	boardElement.innerHTML = '';
 	const baseGridItem = document.createElement("div");
 
 	baseGridItem.classList.add("gridSpace");
@@ -225,6 +239,12 @@ const start = (playerCountArg) => {
 	}
 	boardElement.style.display = "inline-flex";
 	boardOptionsForm.style.display = "none";
+	rematches.forEach(el => el.addEventListener('click', ()=>{
+		reset(board);
+		initializeBoard();
+		gameOverScreen.close();
+		start(playerCount);
+	}));
 	initializeBoardVariant(startPosSelect.value);
 
 }
