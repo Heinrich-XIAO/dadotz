@@ -29,10 +29,12 @@ const setToNextPlayer = () => {
 	}	
 	if (isAI && turnCount%playerCount == 1) {
 		playerCanGo = false;
-		const move = aiGetMove(board, 1, players[turnCount%playerCount]);
+		const move = aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
 		move.increase();
 		turnCount++;
 		cycle(board, true, false);
+	} else {
+		aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
 	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
@@ -40,12 +42,12 @@ const setToNextPlayer = () => {
 	
 }
 
-const cycle = (boardArg=board, delay=true, changePlayer=true, currentPlayer=players[(turnCount-1) % playerCount]) => {
+const cycle = (boardArg=board, delay=true, changePlayer=true) => {
 	const squaresToSplit = [];
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
 			const square = boardArg[i][j];
-			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
+			if (square.value == 4) {
 				squaresToSplit.push(square);
 			}
 		}
@@ -59,14 +61,17 @@ const cycle = (boardArg=board, delay=true, changePlayer=true, currentPlayer=play
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
 			const square = boardArg[i][j];
-			if (square.player.playerId == currentPlayer.playerId && square.value == 4) {
-				if (delay) setTimeout(cycle, cycleDelay);
-				else return cycle(boardArg, false, false) + squaresToSplit.length;
+			if (square.value == 4) {
+				if (delay) return setTimeout(cycle, cycleDelay);
+				else {
+					cycle(boardArg, false, false);
+					return boardArg;
+				}
 			}
 		}
 	}
 	if (changePlayer) setToNextPlayer();
-	return squaresToSplit.length;
+	return boardArg;
 };
 
 const isStillPlaying = (board, playerId) => {
@@ -82,7 +87,7 @@ const spaceOnClick = (space) => {
 		return;
 	}
 	const currentPlayer = players[turnCount % playerCount];
-	if (space.player.playerId === currentPlayer.playerId) {
+	if (space.player.playerId === currentPlayer.playerId && space.value != 0) {
 		space.increase();
 		turnCount++;
 		while (!isStillPlaying(board, currentPlayer.playerId)) {

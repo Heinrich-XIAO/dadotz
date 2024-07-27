@@ -28,56 +28,103 @@ const copyBoard = (board) => {
 
 const getAllOfPlayer = (board, player) => {
   return board.flatMap((row) => 
-    row.filter((cell) => cell.player && cell.player.playerId === player.playerId)
+    row.filter((cell) => cell.player.playerId === player.playerId && cell.value !== 0)
   );
 };
 
-const random_item = items => items[Math.floor(Math.random() * items.length)];
+const randomItem = items => items[Math.floor(Math.random() * items.length)];
 
-const canBlowUpHowMany = (board, cell, prev=[]) => {
-	if (cell.value < 3) return 0;
-	const boardCopy = copyBoard(board);
-	boardCopy[cell.y][cell.x].increase();
-	return cycle(board, false, false);
+const randomBot = (board, player) => {
+	return randomItem(getAllOfPlayer(board,player));
 }
 
-const searchBoard = (board, pattern) => {
+const checkResponse = (board, cell) => {
+	const boardCopy = copyBoard(board);
+	boardCopy[cell.y][cell.x].increase();
+	return cycle(boardCopy, false, false);
+}
+
+const searchBoard = (board, pattern, playerId) => {
 	const matches = [];
-	for (let i = 0; i < 3; i++) {
-		board = rotate2DArray(board);
-		for (let j = 0; j < board.length-pattern.length; j++) {
-			for (let k = 0; k < board[0].length-pattern[0].length; k++) {
+	let boardCopy = copyBoard(board);
+	for (let i = 0; i < 4; i++) {
+		boardCopy = rotate2DArray(boardCopy);
+		for (let j = 0; j < boardCopy.length-pattern.length+1; j++) {
+			for (let k = 0; k < boardCopy[0].length-pattern[0].length+1; k++) {
 				const checkSquare = () => {
 					for (let l = 0; l < pattern.length; l++) {
 						for (let m = 0; m < pattern[0].length; m++) {
-							if (pattern[l][m] != board[j][k]) {
-								return false;
-							}
+							if (pattern[l][m] == "*") continue;
+							if (pattern[l][m] == boardCopy[j+l][k+m].value && boardCopy[j+l][k+m].player.playerId == playerId) continue;
+							if (pattern[l][m] >= 0) return false; 
+							if (pattern[l][m] == -boardCopy[j+l][k+m].value && boardCopy[j+l][k+m].player.playerId != playerId) continue;
+							return false;
 						}
 					}
 					return true;
 				}
-				if (checkSquare()) matches.push(board[j][k]);
+
+				if (checkSquare()) matches.push([board[boardCopy[j][k].y][boardCopy[j][k].x], (i+1)%4]);
 			}
 		}
 	}
-	return matches;
-}
+	return [
+		...new Map(
+				matches.map(x => [JSON.stringify(x), x])
+		).values()
+	];
+};
 
-const aiGetMove = (board, difficulty, player) => {
-	const possibleMoves = getAllOfPlayer(board, player);
-	if (difficulty == 1) {
-		const canBlowUpHowManyList = possibleMoves.map((cell) => [canBlowUpHowMany(board, cell), cell]).sort((a,b)=>a[0]-b[0]);
+const isGameOver = (board, player, opponent) => getAllOfPlayer(board, opponent) == [] || getAllOfPlayer(board, player) == [];
 
-		// const moveScores = possibleMoves.map((square) => {
-		// 		const boardCopy = copyBoardWithoutElements(board);
-		// 		boardCopy[square.y][square.x].increase();
-		// 		cycle(boardCopy, false, false, player);
-		// 		return [getAllOfPlayer(boardCopy, player).length, square];
-		// 	})
-		// 	.sort((a, b) => a[0]-b[0]);
-		// const bestMove = moveScores[0];
-		// console.log(moveScores);
-		// return board[bestMove[1].y][bestMove[1].x];
+const staticEval = (board, player, opponent) => getAllOfPlayer(board, player).length - getAllOfPlayer(board, opponent).length;
+
+const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
+	if (depth == 0 || isGameOver(position, maxPlayer, minPlayer)) return [staticEval(position, maxPlayer, minPlayer)];
+	if (isMax) {
+		let maxEval = -Infinity;
+		let bestMoveSequence;
+		const possibleMoves = getAllOfPlayer(position, maxPlayer);
+		const outcomes = possibleMoves.map(cell=>checkResponse(position, cell));
+		for (let i = 0; i < outcomes.length; i++) {
+			const childEval = minimax(outcomes[i], depth-1, false, maxPlayer, minPlayer, alpha, beta);
+			alpha = Math.max(alpha, childEval[0]);
+			if (childEval[0] > maxEval) {
+				maxEval = childEval[0];
+				bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
+			}
+			if (beta <= alpha) break;
+		}
+		return [maxEval, bestMoveSequence];
+	} else {
+		let minEval = Infinity;
+		let bestMoveSequence;
+		const possibleMoves = getAllOfPlayer(position, minPlayer);
+		const outcomes = possibleMoves.map(cell=>checkResponse(position, cell));
+		for (let i = 0; i < outcomes.length; i++) {
+			const childEval = minimax(outcomes[i], depth-1, true, maxPlayer, minPlayer, alpha, beta);
+			beta = Math.min(beta, childEval[0]);
+			if (childEval[0] < minEval) {
+				minEval = childEval[0];
+				bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
+			}
+			if (beta <= alpha) break;
+		}
+		return [minEval, bestMoveSequence];
 	}
+};
+
+const aiGetMove = (board, difficulty, player, opponent) => {
+  if (difficulty == 1) {
+		const bestMoves = minimax(board,4,true,player,opponent,-Infinity,Infinity);
+		console.log(bestMoves[1]);
+		return bestMoves[1][0]
+
+
+		
+    // const cannons = searchBoard(board, [[-3, -3], [-3, -2]], player.playerId);
+    // const possibleSimpleAttacks = searchBoard(board, [[3, -3]], player.playerId);
+    // if (possibleSimpleAttacks.length > 0) return randomItem(possibleSimpleAttacks[0]);
+    // return randomItem(possibleMoves);
+  }
 };

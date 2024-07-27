@@ -12,6 +12,8 @@ class Space {
 		if (value < 0) {
 			throw new Error("Parameter is not a valid value.")
 		}
+
+		if (value > 4) value = 4;
 		this.value = value;
 		if (this.element) {
 			this.element.textContent = "";
@@ -38,8 +40,6 @@ class Space {
 			this.willSplitNextCycle = true;
 			this.value = 4;
 		} else if (this.value == 0) {
-			this.player.playerId = -1;
-			this.player.playerColor = "#000";
 		}
 	}
 
