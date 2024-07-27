@@ -2,7 +2,8 @@
 const boardWidth = 7;
 const boardHeight = 7;
 const cycleDelay = 250;
-const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"];
+const playerColors = ["#f54e42", "#4287f5", "#32a852", "#fcba03"]; 
+const playerNames = ["red", "blue", "green", "yellow"]
 const players = [];
 
 
@@ -19,11 +20,45 @@ let isCustom;
 // Grab HTML stuff
 const boardElement = document.getElementById("board");
 const containerElement = document.getElementById("container");
-const playerCountForm = document.getElementById("playerCountChoices");
+const boardOptionsForm = document.getElementById("boardOptions");
 const startPosSelect = document.getElementById("startPosSelect");
+const gameOverScreen = document.getElementById("gameOverScreen");
+const gameOverText = document.getElementById("gameOverText");
 
+const hasWon = (board) => {
+	let playersStillPlaying = 0;
+	let winner;
+	for (let i = 0; i < players.length; i++) {
+		if (getAllOfPlayer(board, players[i]).length) {
+			playersStillPlaying++;
+			winner = players[i];
+		}
+		else continue;
+		if (playersStillPlaying>1) return false;
+	}
+	return winner;
+}
+
+const showWinner = winner => {
+	let text;
+	if (isAI) {
+		if (winner.playerId == 0) {
+			text = "You Won!";
+		} else text = "AI Won!";
+	} else {
+		text = `${winner.name.charAt(0).toUpperCase()+winner.name.slice(1)} Won!`
+	}
+	gameOverText.textContent = text;
+	gameOverScreen.showModal();
+}
 
 const setToNextPlayer = () => {
+	const winner = hasWon(board);
+	if (winner) {
+		showWinner(winner);
+		return;
+	}
+
 	while (!isStillPlaying(board, turnCount%playerCount)) {
 		turnCount++;
 	}	
@@ -34,12 +69,11 @@ const setToNextPlayer = () => {
 		turnCount++;
 		cycle(board, true, false);
 	} else {
-		aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
+		// aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
 	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
 	playerCanGo = true;
-	
 }
 
 const cycle = (boardArg=board, delay=true, changePlayer=true) => {
@@ -187,10 +221,10 @@ const start = (playerCountArg) => {
 		playerCount = 2;
 	}
 	for (let i = 0; i < playerCount; i++) {
-		players.push({ playerId: i, playerColor: playerColors[i] });
+		players.push({ playerId: i, playerColor: playerColors[i], name: playerNames[i] });
 	}
 	boardElement.style.display = "inline-flex";
-	playerCountForm.style.display = "none";
+	boardOptionsForm.style.display = "none";
 	initializeBoardVariant(startPosSelect.value);
 
 }

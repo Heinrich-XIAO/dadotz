@@ -1,8 +1,15 @@
+:root {
+	--color1: #f54e42;
+	--color2: #262626;
+	--color3: #4287f5;
+}
+
 body, html {
 	margin: 0;
 	padding: 0;
 	width: 100%;
 	height: 100%;
+	font-family: "JetBrains Mono", monospace;
 }
 
 #container {
@@ -67,7 +74,7 @@ body, html {
 	
 }	
 .three-dots .dot:first-child {
-	position: fixed; 
+	position: absolute; 
 	display: inline-block;
 	transform: translateY(-8.66025403784px);
 }	
@@ -93,10 +100,63 @@ body, html {
 	transform: translate(10px, 10px);
 }				
 
+.boardOptions {
+	display: inline-flex;
+	justify-content: center;
+}
+
 .playerCountOption {
-	border-radius: 25%;
-	border-width: 0px;
 	width: 70px;
 	height: 70px;
+	border-radius: 25%;
+}
+
+#startPosSelect {
+	border-radius: 10px;
+}
+
+.playerCountOption, #startPosSelect {
+	border-width: 0px;
 	background-color: #fff;
+}
+
+dialog {
+	background-color: #262626;
+	border-radius: 10px;
+	border-color: transparent;
+	color: white;
+	text-align: center;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#startPosSelect {
+	margin: auto;
+}
+
+#gameOverText {
+	font-weight: 700;
+	font-size: 1.2em;
+}
+
+#gameOverButtons {
+	margin-top: 10px;
+}
+
+.rematch:active {
+	border-bottom-width: 0px;
+}
+
+.rematch {
+	width: 268px;
+	height: 54px;
+	background-color: var(--color3);
+	border-width: 0px;
+	border-radius: 10px;
+	border-color: rgba(0, 0, 0, 0.5);
+	border-bottom-width: 3px;
+	font-size: 1.1em;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }

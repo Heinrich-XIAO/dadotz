@@ -21,11 +21,12 @@
 			<div id="board" style="display:none">
 
 			</div>
-			<div id="playerCountChoices">
+			<div id="boardOptions">
 				<button class="playerCountOption" onclick="start(1)">Play AI</button>
 				<button class="playerCountOption" onclick="start(2)">2 Player</button>
 				<button class="playerCountOption" onclick="start(3)">3 Player</button>
 				<button class="playerCountOption" onclick="start(4)">4 Player</button>
+				<br/>
 				<select name="startPos" id="startPosSelect">
 					<option value="pickaxe">The Pickaxe (recommended)</option>
 					<option value="corners">Corners Custom</option>
@@ -33,6 +34,12 @@
 				</select>
 			</div>
 		</div>
+		<dialog id="gameOverScreen">
+			<span id="gameOverText"></span>
+			<div id="gameOverButtons">
+				<button class="rematch">Rematch</button>
+			</div>
+		</dialog>
 
   	<script src="js/ai.js"></script>
   	<script src="js/space.js"></script>
