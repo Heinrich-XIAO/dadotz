@@ -132,16 +132,7 @@ const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
 };
 
 const aiGetMove = async (board, difficulty, player, opponent) => {
-  if (difficulty == 1) {
-		const bestMoves = minimax(board,4,true,player,opponent,-Infinity,Infinity);
-		console.log(bestMoves[1]);
-		return bestMoves[1][0]
-
-
-		
-    // const cannons = searchBoard(board, [[-3, -3], [-3, -2]], player.playerId);
-    // const possibleSimpleAttacks = searchBoard(board, [[3, -3]], player.playerId);
-    // if (possibleSimpleAttacks.length > 0) return randomItem(possibleSimpleAttacks[0]);
-    // return randomItem(possibleMoves);
-  }
+	const bestMoves = minimax(board,difficulty,true,player,opponent,-Infinity,Infinity);
+	console.log(bestMoves[1]);
+	return bestMoves[1][0];
 };

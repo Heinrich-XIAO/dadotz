@@ -15,6 +15,7 @@ let turnCount = 0;
 let playerCanGo = true;
 let playerCount = 2;
 let isAI = false;
+let AIDifficulty;
 let isCustom;
 
 // Grab HTML stuff
@@ -25,6 +26,9 @@ const startPosSelect = document.getElementById("startPosSelect");
 const gameOverScreen = document.getElementById("gameOverScreen");
 const gameOverText = document.getElementById("gameOverText");
 const rematches = document.querySelectorAll('.rematch');
+const aiSearchDepthSelector = document.querySelector('#aiSearchDepth');
+const aiOptionsScreen = document.querySelector('#aiOptionsScreen');
+const aiOptionsSubmit = document.querySelector('#aiOptionsScreen input[type="submit"]');
 
 const reset = (boardArg) => {
 	for (let i = 0; i < boardHeight; i++) {
@@ -51,7 +55,7 @@ const showWinner = winner => {
 	gameOverScreen.showModal();
 }
 
-const setToNextPlayer = async () => {
+const setToNextPlayer = () => {
 	const winner = hasWon(board);
 	if (winner) {
 		showWinner(winner);
@@ -61,18 +65,22 @@ const setToNextPlayer = async () => {
 	while (!isStillPlaying(board, turnCount%playerCount)) {
 		turnCount++;
 	}	
-	if (isAI && turnCount%playerCount == 1) {
-		playerCanGo = false;
-		const move = await aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
-		move.increase();
-		turnCount++;
-		cycle(board, true, false);
-	} else {
-		// aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
-	}
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
-	playerCanGo = true;
+	if (isAI && turnCount%playerCount == 1) {
+		playerCanGo = false;
+		setTimeout((async () => {
+			const move = await aiGetMove(board, aiSearchDepthSelector.value, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
+			move.increase();
+			turnCount++;
+			cycle(board, true, false);
+			containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
+			actingPlayer = players[turnCount%playerCount];
+			playerCanGo = true;
+		}), 500);
+	} else {
+		playerCanGo = true;
+	}
 }
 
 const cycle = (boardArg=board, delay=true, changePlayer=true) => {
@@ -103,7 +111,7 @@ const cycle = (boardArg=board, delay=true, changePlayer=true) => {
 			}
 		}
 	}
-	if (changePlayer) setTimeout(setToNextPlayer, 10);
+	if (changePlayer) setToNextPlayer();
 	return boardArg;
 };
 
@@ -139,7 +147,7 @@ const spaceOnClick = (space) => {
 	} else {
 		setToNextPlayer();
 	}
-};
+}; 
 
 const initializeBoard = () => {
 	boardElement.innerHTML = '';
@@ -219,6 +227,11 @@ const start = (playerCountArg) => {
 	if (playerCount == 1) {
 		isAI = true;
 		playerCount = 2;
+		aiOptionsScreen.showModal();
+		aiOptionsSubmit.addEventListener('click', () => {
+			aiOptionsScreen.close();
+			AIDifficulty = aiSearchDepthSelector.value;
+		})
 	}
 	for (let i = 0; i < playerCount; i++) {
 		players.push({ playerId: i, playerColor: playerColors[i], name: playerNames[i] });
@@ -232,7 +245,7 @@ const start = (playerCountArg) => {
 		start(playerCount);
 	}));
 	initializeBoardVariant(startPosSelect.value);
-
+	
 }
 
 

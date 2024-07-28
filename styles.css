@@ -160,3 +160,15 @@ dialog::backdrop {
 	font-size: 1.1em;
 	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+input[type="submit"] {
+	width: 100%;
+	border-bottom-width: 3px;
+	border-color: rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	border-width: 0px;
+	margin-top: 20px;
+	min-height: 50px;
+	font-size: 1.1em;
+	background-color: var(--color3);
+}
