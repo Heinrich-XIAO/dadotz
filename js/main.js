@@ -38,20 +38,6 @@ const reset = (boardArg) => {
 	actingPlayer = players[turnCount%playerCount];
 };
 
-const hasWon = (board) => {
-	let playersStillPlaying = 0;
-	let winner;
-	for (let i = 0; i < players.length; i++) {
-		if (getAllOfPlayer(board, players[i]).length) {
-			playersStillPlaying++;
-			winner = players[i];
-		}
-		else continue;
-		if (playersStillPlaying>1) return false;
-	}
-	return winner;
-}
-
 const showWinner = winner => {
 	let text;
 	if (isAI) {
@@ -65,7 +51,7 @@ const showWinner = winner => {
 	gameOverScreen.showModal();
 }
 
-const setToNextPlayer = () => {
+const setToNextPlayer = async () => {
 	const winner = hasWon(board);
 	if (winner) {
 		showWinner(winner);
@@ -77,7 +63,7 @@ const setToNextPlayer = () => {
 	}	
 	if (isAI && turnCount%playerCount == 1) {
 		playerCanGo = false;
-		const move = aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
+		const move = await aiGetMove(board, 1, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
 		move.increase();
 		turnCount++;
 		cycle(board, true, false);
@@ -117,7 +103,7 @@ const cycle = (boardArg=board, delay=true, changePlayer=true) => {
 			}
 		}
 	}
-	if (changePlayer) setToNextPlayer();
+	if (changePlayer) setTimeout(setToNextPlayer, 10);
 	return boardArg;
 };
 

@@ -1,3 +1,17 @@
+const hasWon = (board) => {
+	let playersStillPlaying = 0;
+	let winner;
+	for (let i = 0; i < players.length; i++) {
+		if (getAllOfPlayer(board, players[i]).length) {
+			playersStillPlaying++;
+			winner = players[i];
+		}
+		else continue;
+		if (playersStillPlaying>1) return false;
+	}
+	return winner;
+}
+
 const rotate2DArray = (board) => {
     // Get the number of rows and columns
     const rows = board.length;
@@ -77,7 +91,10 @@ const searchBoard = (board, pattern, playerId) => {
 
 const isGameOver = (board, player, opponent) => getAllOfPlayer(board, opponent) == [] || getAllOfPlayer(board, player) == [];
 
-const staticEval = (board, player, opponent) => getAllOfPlayer(board, player).length - getAllOfPlayer(board, opponent).length;
+const staticEval = (board, player, opp) => {
+	console.log(	getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0))
+	return getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + getAllOfPlayer(board, player).length - getAllOfPlayer(board, opp).length;
+}
 
 const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
 	if (depth == 0 || isGameOver(position, maxPlayer, minPlayer)) return [staticEval(position, maxPlayer, minPlayer)];
@@ -114,7 +131,7 @@ const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
 	}
 };
 
-const aiGetMove = (board, difficulty, player, opponent) => {
+const aiGetMove = async (board, difficulty, player, opponent) => {
   if (difficulty == 1) {
 		const bestMoves = minimax(board,4,true,player,opponent,-Infinity,Infinity);
 		console.log(bestMoves[1]);
