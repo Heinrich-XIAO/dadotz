@@ -26,9 +26,10 @@ const startPosSelect = document.getElementById("startPosSelect");
 const gameOverScreen = document.getElementById("gameOverScreen");
 const gameOverText = document.getElementById("gameOverText");
 const rematches = document.querySelectorAll('.rematch');
-const aiSearchDepthSelector = document.querySelector('#aiSearchDepth');
+const aiSearchDepth = document.querySelector('#aiSearchDepth');
 const aiOptionsScreen = document.querySelector('#aiOptionsScreen');
 const aiOptionsSubmit = document.querySelector('#aiOptionsScreen input[type="submit"]');
+let redEvalBar = document.querySelector('#redEvalBar'); // #uncleanCode
 
 const reset = (boardArg) => {
 	for (let i = 0; i < boardHeight; i++) {
@@ -70,7 +71,7 @@ const setToNextPlayer = () => {
 	if (isAI && turnCount%playerCount == 1) {
 		playerCanGo = false;
 		setTimeout((async () => {
-			const move = await aiGetMove(board, aiSearchDepthSelector.value, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
+			const move = await aiGetMove(board, aiSearchDepth.value, players[turnCount%playerCount], players[(turnCount+1)%playerCount]);
 			move.increase();
 			turnCount++;
 			cycle(board, true, false);
@@ -80,6 +81,11 @@ const setToNextPlayer = () => {
 		}), 500);
 	} else {
 		playerCanGo = true;
+	}
+	if (playerCount <= 2) {
+		console.log(staticEval(board, players[0], players[1]),maxPossibleStaticEval(board, players[0], players[1]))
+		redEvalBar.style.width = Math.round((staticEval(board, players[0], players[1])/maxPossibleStaticEval(board, players[0], players[1])+0.5)*100) + "%";
+
 	}
 }
 
@@ -150,7 +156,8 @@ const spaceOnClick = (space) => {
 }; 
 
 const initializeBoard = () => {
-	boardElement.innerHTML = '';
+	boardElement.innerHTML = '<div id="evalBar"><div id="redEvalBar"></div></div>';
+	redEvalBar = document.querySelector("#redEvalBar");
 	const baseGridItem = document.createElement("div");
 
 	baseGridItem.classList.add("gridSpace");
@@ -230,7 +237,7 @@ const start = (playerCountArg) => {
 		aiOptionsScreen.showModal();
 		aiOptionsSubmit.addEventListener('click', () => {
 			aiOptionsScreen.close();
-			AIDifficulty = aiSearchDepthSelector.value;
+			AIDifficulty = aiSearchDepth.value;
 		})
 	}
 	for (let i = 0; i < playerCount; i++) {

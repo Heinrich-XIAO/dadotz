@@ -20,7 +20,9 @@
 	<body>
 		<div id="container">
 			<div id="board" style="display:none">
-
+				<div id="evalBar">
+					<div id="redEvalBar"></div>
+				</div>
 			</div>
 			<div id="boardOptions">
 				<button class="playerCountOption" onclick="start(1)">Play AI</button>
@@ -44,7 +46,7 @@
 		<dialog id="aiOptionsScreen">
 			<label for="aiSearchDepth">AI Difficulty: </label>
 			
-			<input type="number" id="aiSearchDepth" value="3" min="1" max="7">
+			<input type="number" id="aiSearchDepth" value="2" min="1" max="7">
 			<br>
 			<input type="submit" value="Submit"/>
 		</dialog>

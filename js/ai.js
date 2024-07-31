@@ -92,12 +92,15 @@ const searchBoard = (board, pattern, playerId) => {
 const isGameOver = (board, player, opponent) => getAllOfPlayer(board, opponent) == [] || getAllOfPlayer(board, player) == [];
 
 const staticEval = (board, player, opp) => {
-	console.log(	getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0))
 	return getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + getAllOfPlayer(board, player).length - getAllOfPlayer(board, opp).length;
 }
 
+const maxPossibleStaticEval = (board, player, opp) => {
+	return getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) + getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + getAllOfPlayer(board, player).length + getAllOfPlayer(board, opp).length;
+}
+
 const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
-	if (depth == 0 || isGameOver(position, maxPlayer, minPlayer)) return [staticEval(position, maxPlayer, minPlayer)];
+	if (depth == 0 || isGameOver(position, maxPlayer, minPlayer)) return [staticEval(position, maxPlayer, minPlayer), []];
 	if (isMax) {
 		let maxEval = -Infinity;
 		let bestMoveSequence;
@@ -131,8 +134,7 @@ const minimax = (position, depth, isMax, maxPlayer, minPlayer, alpha, beta) => {
 	}
 };
 
-const aiGetMove = async (board, difficulty, player, opponent) => {
-	const bestMoves = minimax(board,difficulty,true,player,opponent,-Infinity,Infinity);
-	console.log(bestMoves[1]);
+const aiGetMove = async (board, searchDepth, player, opponent) => {
+	const bestMoves = minimax(board,searchDepth,true,player,opponent,-Infinity,Infinity);
 	return bestMoves[1][0];
 };

@@ -172,3 +172,17 @@ input[type="submit"] {
 	font-size: 1.1em;
 	background-color: var(--color3);
 }
+
+#evalBar {
+  width: 100%;
+  background-color: var(--color3);
+	border: solid;
+	border-width: 2px;
+	border-color: var(--color2);
+}
+
+#redEvalBar {
+  width: 50%;
+  height: 30px;
+  background-color: var(--color1);
+}
