@@ -15,6 +15,7 @@
      crossorigin="anonymous"></script>
 	  <link rel="stylesheet" href="styles.css"> 
 		<link rel="icon" type="image/x-png" href="/favicon-32x32.png">
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 		<style>
 		</style>
 	<body>
@@ -57,6 +58,11 @@
   	<script src="js/ai.js"></script>
   	<script src="js/space.js"></script>
 		<script src="js/main.js"></script>
+		<script type="module">
+			import { createClient } from '@supabase/supabase-js'
+
+			const supabase = createClient('https://purstzebyuswecdysbhh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1cnN0emVieXVzd2VjZHlzYmhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI1MTQwNTksImV4cCI6MjAzODA5MDA1OX0.NuXbB_mQoZlvziGEjPczdmZ-8FayBcxaaPVQPRD1p0o')
+		</script>
 	</head>
 	</body>
 </html>
