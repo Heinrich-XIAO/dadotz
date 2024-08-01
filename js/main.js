@@ -31,6 +31,8 @@ const aiOptionsScreen = document.querySelector('#aiOptionsScreen');
 const aiOptionsSubmit = document.querySelector('#aiOptionsScreen input[type="submit"]');
 let redEvalBar = document.querySelector('#redEvalBar'); // #uncleanCode
 
+const popSound = new Audio("pop.mp3");
+
 const reset = (boardArg) => {
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
@@ -41,6 +43,7 @@ const reset = (boardArg) => {
 	playerCanGo = true;
 	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
 	actingPlayer = players[turnCount%playerCount];
+	players.length = 0;
 };
 
 const showWinner = winner => {
@@ -54,7 +57,7 @@ const showWinner = winner => {
 	}
 	gameOverText.textContent = text;
 	gameOverScreen.showModal();
-}
+};
 
 const setToNextPlayer = () => {
 	const winner = hasWon(board);
@@ -83,11 +86,12 @@ const setToNextPlayer = () => {
 		playerCanGo = true;
 	}
 	if (playerCount <= 2) {
-		console.log(staticEval(board, players[0], players[1]),maxPossibleStaticEval(board, players[0], players[1]))
-		redEvalBar.style.width = Math.round((staticEval(board, players[0], players[1])/maxPossibleStaticEval(board, players[0], players[1])+0.5)*100) + "%";
+		console.log(getAllOfPlayer(board, players[0]).length/(getAllOfPlayer(board, players[0]).length+getAllOfPlayer(board, players[1]).length)*100);
+		redEvalBar.style.width = Math.round(getAllOfPlayer(board, players[0]).length/(getAllOfPlayer(board, players[0]).length+getAllOfPlayer(board, players[1]).length)*100) + "%";
+
 
 	}
-}
+};
 
 const cycle = (boardArg=board, delay=true, changePlayer=true) => {
 	const squaresToSplit = [];
@@ -104,6 +108,8 @@ const cycle = (boardArg=board, delay=true, changePlayer=true) => {
 		const square = squaresToSplit[i];
 		square.split(boardArg);
 	}
+
+	if (squaresToSplit.length > 0) popSound.play();
 
 	for (let i = 0; i < boardHeight; i++) {
 		for (let j = 0; j < boardWidth; j++) {
@@ -140,6 +146,7 @@ const spaceOnClick = (space) => {
 		while (!isStillPlaying(board, currentPlayer.playerId)) {
 			turnCount++;
 		}
+		popSound.play();
 	}
 	if (isCustom && turnCount < playerCount && space.player.playerId === -1) {
 		space.setPlayer(currentPlayer);
@@ -180,7 +187,7 @@ const initializeBoard = () => {
 			board[i][j].element.addEventListener("click", () => spaceOnClick(board[i][j]));
 		}
 	}
-}
+};
 
 const initializeBoardVariant = (variant) => {
 	if (variant != "custom") isCustom = false;
@@ -210,6 +217,7 @@ const initializeBoardVariant = (variant) => {
 			board[1][boardHeight-1].split(board);
 		}
 	}
+	
 	if (variant == "corners") {
 		board[1][1].player = structuredClone(players[0]);
 		board[1][1].split(board);
