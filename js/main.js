@@ -69,8 +69,6 @@ const setToNextPlayer = () => {
 	while (!isStillPlaying(board, turnCount%playerCount)) {
 		turnCount++;
 	}	
-	containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
-	actingPlayer = players[turnCount%playerCount];
 	if (isAI && turnCount%playerCount == 1) {
 		playerCanGo = false;
 		setTimeout((async () => {
@@ -78,8 +76,6 @@ const setToNextPlayer = () => {
 			move.increase();
 			turnCount++;
 			cycle(board, true, false);
-			containerElement.style.backgroundColor = players[turnCount%playerCount].playerColor;
-			actingPlayer = players[turnCount%playerCount];
 			playerCanGo = true;
 		}), 500);
 	} else {
