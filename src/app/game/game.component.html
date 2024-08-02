@@ -1,0 +1,36 @@
+<div id="board" #boardElement [style]="isPlaying?'display:inline-flex':'display:none'">
+  <div id="evalBar">
+    <div id="redEvalBar"></div>
+  </div>
+  <div class="row" *ngFor="let row of board; index as i;">
+    <div [id]="i+'-'+j" #gridSpace [class]="'gridSpace'+' '+'dots-'+space.value" (click)="pressed(j,i)" *ngFor="let space of row; index as j;">
+      <div class="dot" *ngFor="let dot of [].constructor(space.value)" [style]="space.player?'background-color:'+space.player.color:''">
+      </div>
+    </div>
+  </div>
+</div>
+<div id="boardOptions" [style]="isPlaying ? 'display: none' : ''">
+  <button class="playerCountOption" (click)="start(1)">Play AI</button>
+  <button class="playerCountOption" (click)="start(2)">2 Player</button>
+  <button class="playerCountOption" (click)="start(3)">3 Player</button>
+  <button class="playerCountOption" (click)="start(4)">4 Player</button>
+  <br/>
+  <select [(value)]="startPosition" name="startPos" id="startPosSelect">
+    <option value="pickaxe">The Pickaxe (recommended)</option>
+    <option value="corners">Corners</option>
+    <option value="custom">Fully Custom</option>
+  </select>
+</div>
+<dialog #gameOverScreen>
+  <span id="gameOverText"></span>
+  <div id="gameOverButtons">
+    <button class="rematch">Rematch</button>
+  </div>
+</dialog>
+<dialog #aiOptionsScreen>
+  <label for="aiSearchDepth">AI Difficulty: </label>
+
+  <input type="number" id="aiSearchDepth" [(value)]="aiSearchDepth" min="1" max="7">
+  <br>
+  <input (click)="aiOptionsSubmit()" type="submit" value="Submit"/>
+</dialog>
