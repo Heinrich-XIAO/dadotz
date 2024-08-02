@@ -125,13 +125,13 @@ export class Game {
 
   setPlayer(col: number, row: number, board: Array<Array<Space>>, player: Player | undefined) {
     if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight) return board;
-    board[col][row].player = player;
+    board[row][col].player = player;
     return board;
   }
 
   increase(col: number, row: number, board: Array<Array<Space>>) {
-    if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight) return board;
-    board[col][row].value++;
+    if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight || board[row][col].value >= 4) return board;
+    board[row][col].value++;
     return board;
   }
 
@@ -161,7 +161,25 @@ export class Game {
   }
 
   switchPlayer() {
+    const cycles = this.calculateCycles(structuredClone(this.board));
+    this.renderCycles(cycles);
+    console.log()
     this.turnCount++;
+  }
+
+  renderCycles(cycles: Array<Array<Space>>) {
+    if (cycles.length == 0) return;
+    for (let i = 0; i < cycles[0].length; i++) {
+      this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
+    }
+    setTimeout(() => this.renderCycles(cycles.slice(1)), 500);
+  }
+
+  calculateCycles(board: Array<Array<Space>>): Array<Array<Space>> {
+    const squaresToSplit: Array<Space> = board.flat().filter(space => space.value == 4);
+    for (let i = 0; i < squaresToSplit.length; i++) board = this.split(squaresToSplit[i].col, squaresToSplit[i].row, board);
+    if (board.flat().filter(space => space.value == 4).length > 0) return [squaresToSplit].concat(this.calculateCycles(structuredClone(board)));
+    return [squaresToSplit];
   }
 }
 
