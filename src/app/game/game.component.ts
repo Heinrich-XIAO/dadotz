@@ -155,6 +155,7 @@ export class Game {
     const currentPlayer = this.players[this.turnCount%this.players.length];
     if (!this.board[row][col].player) return;
     if (this.board[row][col].value >= 4) return;
+    if (currentPlayer.id == 1 && this.isAi) return;
     if (this.board[row][col].player.id != currentPlayer.id) return;
     else if (this.board[row][col].value != 0) this.board[row][col].value++;
     if (this.isCustom && this.turnCount < this.players.length) this.board[row][col].value = 3;
@@ -197,10 +198,12 @@ export class Game {
       }
       return;
     }
-    for (let i = 0; i < cycles[0].length; i++) {
-      this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
-    }
-    setTimeout(() => this.renderCycles(cycles.slice(1), callNextPlayer), 500);
+    setTimeout(() => {
+      for (let i = 0; i < cycles[0].length; i++) {
+        this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
+      }
+      this.renderCycles(cycles.slice(1), callNextPlayer)
+    }, 250);
   }
 
   calculateCycles(board: Array<Array<Space>>): Array<Array<Space>> {
