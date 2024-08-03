@@ -41,6 +41,7 @@ export class Game {
   boardElements: ElementRef[][] = [];
   isPlaying: boolean = false;
   turnCount: number = 0;
+  gameOverText: string = '';
 
   ngAfterViewInit() {
     const elementsArray = this.gridSpaces.toArray();
@@ -56,7 +57,6 @@ export class Game {
   }
 
   initializeBoardVariant(variant: string, playerCount: number) {
-    console.log(this.players)
     if (variant == "custom") this.isCustom = true;
     if (variant == "pickaxe") {
       this.board[1][1].player = structuredClone(this.players[0]);
@@ -112,7 +112,6 @@ export class Game {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
     }
-    console.log(this.board);
     this.initializeBoardVariant(this.startPosition, this.players.length);
   }
 
@@ -157,29 +156,45 @@ export class Game {
     if (!this.board[row][col].player) return;
     if (this.board[row][col].value >= 4) return;
     if (this.board[row][col].player.id != currentPlayer.id) return;
-    else this.board[row][col].value++;
+    else if (this.board[row][col].value != 0) this.board[row][col].value++;
     if (this.isCustom && this.turnCount < this.players.length) this.board[row][col].value = 3;
     const cycles = this.calculateCycles(structuredClone(this.board));
     this.renderCycles(cycles);
   }
 
   switchPlayer() {
-    if (this.isAi && this.turnCount%2==0) {
+    const hasWon = this.hasWon(this.board);
+    if (hasWon) {
+      this.gameOver(hasWon);
+    }
+    if (this.isAi && this.turnCount%2==1) {
       setTimeout(() => {
-        const bestMoves = this.minimax(structuredClone(this.board), 4, true, this.players[1], this.players[0], -Infinity, Infinity);
-        console.log(bestMoves);
+        const bestMoves = this.minimax(structuredClone(this.board), 2, true, this.players[1], this.players[0], -Infinity, Infinity);
         this.board = this.increase(bestMoves[1][0].col, bestMoves[1][0].row, this.board);
         const cycles = this.calculateCycles(structuredClone(this.board));
         this.renderCycles(cycles, false);
-        this.turnCount++;
       }, 500);
     }
-    this.turnCount++;
+  }
+
+  gameOver(player: Player) {
+    if (this.isAi) {
+      if (player.id == 0) this.gameOverText = "You Won!"
+      else this.gameOverText = "AI Won!"
+    } else this.gameOverText = `${player.name} Won!`
+    this.gameOverScreen.nativeElement.showModal();
   }
 
   renderCycles(cycles: Array<Array<Space>>, callNextPlayer: boolean=true) {
-    if (cycles.length == 0) {
+    if (cycles.length == 0 || cycles[0].length == 0) {
+      this.turnCount++;
       if (callNextPlayer) this.switchPlayer();
+      else {
+        const hasWon = this.hasWon(this.board);
+        if (hasWon) {
+          this.gameOver(hasWon);
+        }
+      }
       return;
     }
     for (let i = 0; i < cycles[0].length; i++) {
@@ -216,7 +231,7 @@ export class Game {
   checkResponse(board: Board, cell: Space) {
     let boardCopy = structuredClone(board);
     boardCopy = this.increase(cell.col, cell.row, boardCopy);
-    this.calculateCycleResponse(this.calculateCycles(boardCopy), boardCopy);
+    this.calculateCycleResponse(this.calculateCycles(structuredClone(boardCopy)), boardCopy);
     return boardCopy;
   }
 
@@ -257,6 +272,21 @@ export class Game {
       }
       return [minEval, bestMoveSequence];
     }
-}
+  }
+
+  hasWon(board: Board) {
+    let playersStillPlaying = 0;
+    let winner;
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.getAllOfPlayer(board, this.players[i]).length) {
+        playersStillPlaying++;
+        winner = this.players[i];
+      }
+      else continue;
+      if (playersStillPlaying>1) return false;
+    }
+    return winner;
+  }
+
 }
 
