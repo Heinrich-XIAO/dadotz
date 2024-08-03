@@ -24,7 +24,7 @@
 <dialog #gameOverScreen>
   <span id="gameOverText">{{ gameOverText }}</span>
   <div id="gameOverButtons">
-    <button class="rematch">Rematch</button>
+    <button class="rematch" (click)="restart()">Rematch</button>
   </div>
 </dialog>
 <dialog #aiOptionsScreen>

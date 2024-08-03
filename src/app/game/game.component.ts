@@ -56,6 +56,16 @@ export class Game {
     }
   }
 
+  restart() {
+    this.board = Array.from({ length: this.boardHeight }, (_, row) => Array.from({ length: this.boardWidth }, (_, col) => ({col,row,value:0})));
+    this.boardElements = [];
+    this.isPlaying = true;
+    this.turnCount = 0;
+    this.gameOverText = '';
+    this.gameOverScreen.nativeElement.close();
+    this.initializeBoardVariant(this.startPosition, this.players.length);
+  }
+
   initializeBoardVariant(variant: string, playerCount: number) {
     if (variant == "custom") this.isCustom = true;
     if (variant == "pickaxe") {
@@ -290,6 +300,5 @@ export class Game {
     }
     return winner;
   }
-
 }
 
