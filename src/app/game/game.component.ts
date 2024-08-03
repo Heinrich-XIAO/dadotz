@@ -14,6 +14,8 @@ interface Space {
   player?: Player;
 }
 
+type Board = Array<Array<Space>>;
+
 @Component({
   selector: 'app-game',
   standalone: true,
@@ -157,22 +159,33 @@ export class Game {
     if (this.board[row][col].player.id != currentPlayer.id) return;
     else this.board[row][col].value++;
     if (this.isCustom && this.turnCount < this.players.length) this.board[row][col].value = 3;
-    this.switchPlayer();
+    const cycles = this.calculateCycles(structuredClone(this.board));
+    this.renderCycles(cycles);
   }
 
   switchPlayer() {
-    const cycles = this.calculateCycles(structuredClone(this.board));
-    this.renderCycles(cycles);
-    console.log()
+    if (this.isAi && this.turnCount%2==0) {
+      setTimeout(() => {
+        const bestMoves = this.minimax(structuredClone(this.board), 4, true, this.players[1], this.players[0], -Infinity, Infinity);
+        console.log(bestMoves);
+        this.board = this.increase(bestMoves[1][0].col, bestMoves[1][0].row, this.board);
+        const cycles = this.calculateCycles(structuredClone(this.board));
+        this.renderCycles(cycles, false);
+        this.turnCount++;
+      }, 500);
+    }
     this.turnCount++;
   }
 
-  renderCycles(cycles: Array<Array<Space>>) {
-    if (cycles.length == 0) return;
+  renderCycles(cycles: Array<Array<Space>>, callNextPlayer: boolean=true) {
+    if (cycles.length == 0) {
+      if (callNextPlayer) this.switchPlayer();
+      return;
+    }
     for (let i = 0; i < cycles[0].length; i++) {
       this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
     }
-    setTimeout(() => this.renderCycles(cycles.slice(1)), 500);
+    setTimeout(() => this.renderCycles(cycles.slice(1), callNextPlayer), 500);
   }
 
   calculateCycles(board: Array<Array<Space>>): Array<Array<Space>> {
@@ -181,5 +194,69 @@ export class Game {
     if (board.flat().filter(space => space.value == 4).length > 0) return [squaresToSplit].concat(this.calculateCycles(structuredClone(board)));
     return [squaresToSplit];
   }
+
+  calculateCycleResponse(cycles: Array<Array<Space>>, board: Board) {
+    if (cycles.length == 0) return;
+    for (let i = 0; i < cycles[0].length; i++) {
+      board = this.split(cycles[0][i].col, cycles[0][i].row, board);
+    }
+    this.calculateCycleResponse(cycles.slice(1), board);
+  }
+
+  isGameOver(board: Board, player: Player, opponent: Player): boolean {
+    return this.getAllOfPlayer(board, opponent).length == 0 || this.getAllOfPlayer(board, player).length == 0;
+  }
+
+  getAllOfPlayer(board: Board, player: Player): Array<Space> {
+    return board.flatMap((row) =>
+      row.filter((cell) => cell.player && cell.player.id === player.id && cell.value !== 0)
+    );
+  }
+
+  checkResponse(board: Board, cell: Space) {
+    let boardCopy = structuredClone(board);
+    boardCopy = this.increase(cell.col, cell.row, boardCopy);
+    this.calculateCycleResponse(this.calculateCycles(boardCopy), boardCopy);
+    return boardCopy;
+  }
+
+  staticEval(board: Board, player: Player, opp: Player): number {
+    return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length - this.getAllOfPlayer(board, opp).length;
+  }
+
+  minimax(position: Board, depth: number, isMax: boolean, maxPlayer: Player, minPlayer: Player, alpha: number, beta: number): [number, Array<Space>] {
+    if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) return [this.staticEval(position, maxPlayer, minPlayer), []];
+    if (isMax) {
+      let maxEval: number = -Infinity;
+      let bestMoveSequence: Array<Space> = [];
+      const possibleMoves: Array<Space> = this.getAllOfPlayer(position, maxPlayer);
+      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space)=>this.checkResponse(position, cell));
+      for (let i = 0; i < outcomes.length; i++) {
+        const childEval = this.minimax(outcomes[i], depth-1, false, maxPlayer, minPlayer, alpha, beta);
+        alpha = Math.max(alpha, childEval[0]);
+        if (childEval[0] > maxEval) {
+          maxEval = childEval[0];
+          bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
+        }
+        if (beta <= alpha) break;
+      }
+      return [maxEval, bestMoveSequence];
+    } else {
+      let minEval: number = Infinity;
+      let bestMoveSequence: Array<Space> = [];
+      const possibleMoves: Array<Space> = this.getAllOfPlayer(position, minPlayer);
+      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space)=>this.checkResponse(position, cell));
+      for (let i = 0; i < outcomes.length; i++) {
+        const childEval = this.minimax(outcomes[i], depth-1, true, maxPlayer, minPlayer, alpha, beta);
+        beta = Math.min(beta, childEval[0]);
+        if (childEval[0] < minEval) {
+          minEval = childEval[0];
+          bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
+        }
+        if (beta <= alpha) break;
+      }
+      return [minEval, bestMoveSequence];
+    }
+}
 }
 
