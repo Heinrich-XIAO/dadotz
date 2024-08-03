@@ -255,6 +255,10 @@ export class Game {
     return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length - this.getAllOfPlayer(board, opp).length;
   }
 
+  maxPossibleStaticEval(board: Board, player: Player, opp: Player): number {
+    return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length + this.getAllOfPlayer(board, opp).length;
+  }
+
   minimax(position: Board, depth: number, isMax: boolean, maxPlayer: Player, minPlayer: Player, alpha: number, beta: number): [number, Array<Space>] {
     if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) return [this.staticEval(position, maxPlayer, minPlayer), []];
     if (isMax) {
@@ -302,6 +306,10 @@ export class Game {
       if (playersStillPlaying>1) return false;
     }
     return winner;
+  }
+
+  evalBarWidth() {
+    return Math.round(this.getAllOfPlayer(this.board, this.players[0]).length/(this.getAllOfPlayer(this.board, this.players[0]).length+this.getAllOfPlayer(this.board, this.players[1]).length)*100)+'%';
   }
 }
 
