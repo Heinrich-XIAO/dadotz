@@ -30,7 +30,7 @@
 <dialog #aiOptionsScreen>
   <label for="aiSearchDepth">AI Difficulty: </label>
 
-  <input type="number" id="aiSearchDepth" [(value)]="aiSearchDepth" min="1" max="7">
+  <input type="number" id="aiSearchDepth" [(ngModel)]="aiSearchDepth" min="1" max="7">
   <br>
   <input (click)="aiOptionsSubmit()" type="submit" value="Submit"/>
 </dialog>

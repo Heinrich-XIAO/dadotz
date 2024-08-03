@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface Player {
   id: number;
@@ -19,7 +20,7 @@ type Board = Array<Array<Space>>;
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -180,7 +181,9 @@ export class Game {
     }
     if (this.isAi && this.turnCount%2==1) {
       setTimeout(() => {
-        const bestMoves = this.minimax(structuredClone(this.board), 2, true, this.players[1], this.players[0], -Infinity, Infinity);
+        console.time("AI Search");
+        const bestMoves = this.minimax(structuredClone(this.board), this.aiSearchDepth, true, this.players[1], this.players[0], -Infinity, Infinity);
+        console.timeEnd("AI Search");
         this.board = this.increase(bestMoves[1][0].col, bestMoves[1][0].row, this.board);
         const cycles = this.calculateCycles(structuredClone(this.board));
         this.renderCycles(cycles, false);
