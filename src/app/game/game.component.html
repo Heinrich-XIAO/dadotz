@@ -1,5 +1,5 @@
 <div id="board" #boardElement [style]="isPlaying?'display:inline-flex':'display:none'">
-  <div id="evalBar">
+  <div id="evalBar" [style]="players.length == 2?'':'display:none'">
     <div id="redEvalBar" [style.width]="evalBarWidth()"></div>
   </div>
   <div class="row" *ngFor="let row of board; index as i;">

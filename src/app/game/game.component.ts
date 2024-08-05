@@ -81,14 +81,14 @@ export class Game {
       this.split(this.boardWidth-2, this.boardHeight-1,this.board);
 
       if (playerCount >= 3) {
-        this.board[this.boardWidth-2][1].player = structuredClone(this.players[2]);
+        this.board[1][this.boardHeight-2].player = structuredClone(this.players[2]);
         this.split(this.boardWidth-2, 1, this.board);
         this.split(this.boardWidth-1, 1, this.board);
         this.split(this.boardWidth-2, 0, this.board);
       }
 
       if (playerCount >= 4) {
-        this.board[1][this.boardHeight-2].player = structuredClone(this.players[3]);
+        this.board[this.boardWidth-2][1].player = structuredClone(this.players[3]);
         this.split(1, this.boardHeight-2, this.board);
         this.split(0, this.boardHeight-2, this.board);
         this.split(1, this.boardHeight-1, this.board);
@@ -121,6 +121,7 @@ export class Game {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
     }
+    console.log(this.players)
     this.initializeBoardVariant(this.startPosition, this.players.length);
   }
 
