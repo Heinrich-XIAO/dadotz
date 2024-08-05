@@ -101,12 +101,12 @@ export class Game {
       this.split(this.boardWidth-2, this.boardHeight-2, this.board);
 
       if (playerCount >= 3) {
-        this.board[this.boardWidth-2][1].player = structuredClone(this.players[2]);
+        this.board[1][this.boardHeight-2].player = structuredClone(this.players[2]);
         this.split(this.boardWidth-2, 1,this.board);
       }
 
       if (playerCount >= 4) {
-        this.board[1][this.boardHeight-2].player = structuredClone(this.players[3]);
+        this.board[this.boardWidth-2][1].player = structuredClone(this.players[3]);
         this.split(1, this.boardHeight-2,this.board);
       }
     }
