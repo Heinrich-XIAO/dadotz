@@ -69,7 +69,7 @@ export class Game {
 
   initializeBoardVariant(variant: string, playerCount: number) {
     if (variant == "custom") this.isCustom = true;
-    if (variant == "pickaxe") {
+    else if (variant == "pickaxe") {
       this.board[1][1].player = structuredClone(this.players[0]);
       this.split(1, 1,this.board);
       this.split(0, 1,this.board);
@@ -93,9 +93,7 @@ export class Game {
         this.split(0, this.boardHeight-2, this.board);
         this.split(1, this.boardHeight-1, this.board);
       }
-    }
-
-    if (variant == "corners") {
+    } else if (variant == "corners") {
       this.board[1][1].player = structuredClone(this.players[0]);
       this.split(1, 1, this.board);
 
@@ -163,13 +161,18 @@ export class Game {
   }
 
   pressed(col: number, row: number) {
+    console.log(col, row, this.isCustom, this.turnCount < this.players.length)
     const currentPlayer = this.players[this.turnCount%this.players.length];
-    if (!this.board[row][col].player) return;
-    if (this.board[row][col].value >= 4) return;
-    if (currentPlayer.id == 1 && this.isAi) return;
-    if (this.board[row][col].player.id != currentPlayer.id) return;
-    else if (this.board[row][col].value != 0) this.board[row][col].value++;
-    if (this.isCustom && this.turnCount < this.players.length) this.board[row][col].value = 3;
+    if (this.isCustom && this.turnCount < this.players.length) {
+      this.board[row][col].value = 3;
+      this.board[row][col].player = currentPlayer;
+    } else {
+      if (!this.board[row][col].player) return;
+      if (this.board[row][col].value >= 4) return;
+      if (currentPlayer.id == 1 && this.isAi) return;
+      if (this.board[row][col].player.id != currentPlayer.id) return;
+      if (this.board[row][col].value != 0) this.board[row][col].value++;
+    }
     const cycles = this.calculateCycles(structuredClone(this.board));
     this.renderCycles(cycles);
   }
@@ -295,6 +298,7 @@ export class Game {
   }
 
   hasWon(board: Board) {
+    if (this.isCustom && this.turnCount < this.players.length) return false;
     let playersStillPlaying = 0;
     let winner;
     for (let i = 0; i < this.players.length; i++) {
@@ -309,6 +313,7 @@ export class Game {
   }
 
   evalBarWidth() {
+    if (this.isCustom && this.turnCount < this.players.length) return "50%"
     return Math.round(this.getAllOfPlayer(this.board, this.players[0]).length/(this.getAllOfPlayer(this.board, this.players[0]).length+this.getAllOfPlayer(this.board, this.players[1]).length)*100)+'%';
   }
 }
