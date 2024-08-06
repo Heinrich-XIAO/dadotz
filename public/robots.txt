@@ -16,6 +16,9 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
+User-agent: archive.org_bot
+Disallow: /
+
 User-agent: *
 Disallow: /
 
