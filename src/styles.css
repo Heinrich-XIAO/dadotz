@@ -225,13 +225,14 @@ div#content {
 }
 
 
-.sidebar *:hover {
+.sidebar *:hover:not(.profile_button) {
   background-color: #555;
   color: white;
 }
 
 .sidebar form {
   padding: 0;
+  width: auto;
 }
 
 .sidebar form button {
@@ -241,6 +242,25 @@ div#content {
   padding: 16px;
   cursor: pointer;
   font-size: 16px;
-  line-height: 1.5;
   display: inline;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.avatar {
+  width: var(--avatar-size, 50px); /* Default size is 50px */
+  height: var(--avatar-size, 50px);
+  border-radius: 50%; /* To make it a circle */
+  object-fit: cover; /* Ensure the image fits within the circle */
+  padding: 0px;
+}
+
+.profile_button {
+  width: 100%;
+  box-sizing: border-box;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

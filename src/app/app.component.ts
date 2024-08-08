@@ -14,12 +14,11 @@ import { NgIf } from '@angular/common';
 })
 export class AppComponent {
   title = 'dadotz-angular';
-  userData: User | undefined;
+  userData: User | undefined | null;
 
   constructor(private auth: AuthService, private router: Router) {
     this.auth.currentUser.subscribe(user => {
       console.log(user)
-      if (user == null) return;
       this.userData = user;
     })
   }
