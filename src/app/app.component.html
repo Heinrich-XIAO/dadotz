@@ -1,8 +1,9 @@
 <div class="sidebar">
   <a href="/">Home</a>
   <a href="/signup">Signup</a>
-  <form>
+  <form *ngIf="userData != undefined && userData.user_metadata != undefined">
     <button (click)="signOut()" type="button">Logout</button>
+    <p>{{ userData.user_metadata['name'] }}</p>
   </form>
 </div>
 

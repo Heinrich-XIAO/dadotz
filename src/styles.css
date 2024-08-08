@@ -208,7 +208,7 @@ input[type="submit"] {
     height: auto;
     position: relative;
   }
-  .sidebar a {float: left;}
+  .sidebar * {float: left;}
   div#content {margin-left: 0 !important; width: 100% !important;}
 }
 
@@ -217,7 +217,7 @@ div#content {
   margin-left: 140px;
 }
 
-.sidebar a {
+.sidebar * {
   display: block;
   color: white;
   text-decoration: none;
@@ -225,7 +225,7 @@ div#content {
 }
 
 
-.sidebar a:hover {
+.sidebar *:hover {
   background-color: #555;
   color: white;
 }

@@ -121,7 +121,6 @@ export class Game {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
     }
-    console.log(this.players)
     this.initializeBoardVariant(this.startPosition, this.players.length);
   }
 
@@ -162,7 +161,6 @@ export class Game {
   }
 
   pressed(col: number, row: number) {
-    console.log(col, row, this.isCustom, this.turnCount < this.players.length)
     const currentPlayer = this.players[this.turnCount%this.players.length];
     if (this.isCustom && this.turnCount < this.players.length) {
       this.board[row][col].value = 3;
