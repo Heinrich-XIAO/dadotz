@@ -12,12 +12,17 @@ body, html {
 	font-family: "JetBrains Mono", monospace;
 }
 
+#content {
+  background-color: var(--color2);
+  height: 100%;
+}
+
 #container {
 	display: inline-flex;
 	height: 100%;
-	background-color: var(--color2);
 	justify-content: center;
 	align-items: center;
+  width: 100%;
 }
 
 #board {
@@ -203,23 +208,59 @@ input[type="submit"] {
     height: auto;
     position: relative;
   }
-  .sidebar a {float: left;}
-  div#container {margin-left: 0 !important; width: 100% !important;}
+  .sidebar * {float: left;}
+  div#content {margin-left: 0 !important; width: 100% !important;}
 }
 
-div#container {
+div#content {
   width: calc(100% - 140px);
   margin-left: 140px;
 }
 
-.sidebar a {
+.sidebar * {
   display: block;
   color: white;
   text-decoration: none;
+  padding: 16px;
 }
 
 
-.sidebar a:hover {
+.sidebar *:hover:not(.profile_button) {
   background-color: #555;
   color: white;
+}
+
+.sidebar form {
+  padding: 0;
+  width: auto;
+}
+
+.sidebar form button {
+  background-color: rgba(0, 0, 0, 0);
+  background: none;
+  border: none;
+  padding: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  display: inline;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.avatar {
+  width: var(--avatar-size, 50px); /* Default size is 50px */
+  height: var(--avatar-size, 50px);
+  border-radius: 50%; /* To make it a circle */
+  object-fit: cover; /* Ensure the image fits within the circle */
+  padding: 0px;
+}
+
+.profile_button {
+  width: 100%;
+  box-sizing: border-box;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
