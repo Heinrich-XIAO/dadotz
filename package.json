@@ -18,13 +18,14 @@
     "@angular/platform-browser": "^18.1.0",
     "@angular/platform-browser-dynamic": "^18.1.0",
     "@angular/router": "^18.1.0",
+    "@supabase/supabase-js": "2.43.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^18.1.3",
-    "@angular/cli": "^18.1.3",
+    "@angular-devkit/build-angular": "^18.1.4",
+    "@angular/cli": "^18.1.4",
     "@angular/compiler-cli": "^18.1.0",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.1.0",
@@ -34,6 +35,12 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "serve": "^14.2.3",
+    "supabase": "^1.167.1",
     "typescript": "~5.5.2"
+  },
+  "overrides": {
+    "@supabase/supabase-js": {
+      "@supabase/auth-js": "2.61.0"
+    }
   }
 }
