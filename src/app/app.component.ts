@@ -18,6 +18,7 @@ export class AppComponent {
 
   constructor(private auth: AuthService, private router: Router) {
     this.auth.currentUser.subscribe(user => {
+      if (this.userData) return;
       console.log(user)
       this.userData = user;
     })
@@ -26,5 +27,6 @@ export class AppComponent {
   signOut() {
     this.auth.signOut();
     this.router.navigate(['/']);
+    this.userData = null;
   }
 }
