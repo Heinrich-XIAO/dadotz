@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Game } from '../app/game/game.component';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,12 @@ import { Game } from '../app/game/game.component';
 })
 export class AppComponent {
   title = 'dadotz-angular';
+  constructor(private auth: AuthService, private router: Router) {
+
+  }
+
+  signOut() {
+    this.auth.signOut();
+    this.router.navigate(['/']);
+  }
 }

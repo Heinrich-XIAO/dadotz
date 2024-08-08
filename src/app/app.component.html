@@ -1,1 +1,11 @@
-<router-outlet><router-outlet>
+<div class="sidebar">
+  <a href="/">Home</a>
+  <a href="/signup">Signup</a>
+  <form>
+    <button (click)="signOut()" type="button">Logout</button>
+  </form>
+</div>
+
+<div id="content">
+  <router-outlet></router-outlet>
+</div>
