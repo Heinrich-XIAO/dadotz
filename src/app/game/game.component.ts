@@ -158,7 +158,6 @@ export class Game {
         }
       ])
       .select();
-    console.log(data, error)
     this.isPlaying = true;
   }
 

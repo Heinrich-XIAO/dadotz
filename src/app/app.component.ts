@@ -19,7 +19,6 @@ export class AppComponent {
   ngAfterViewInit() {
     setTimeout(() => {
       this.userData = this.auth.user.getValue();
-      console.log(this.userData)
     }, 100)
   }
 
