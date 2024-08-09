@@ -1,9 +1,6 @@
-import { Component, ElementRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewChildren, QueryList, Pipe } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../auth.service';
-import { environment } from '../../environments/environment';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase.service';
 
 interface Player {
@@ -25,6 +22,20 @@ interface Move {
   row: number;
   value: number;
   player: Player;
+}
+
+type DifficultyObject = {
+  difficulty: number;
+};
+
+type GameDB = {
+  id: number;
+  created_at: string;
+  ended_at: string | null;
+  moves: Array<Move>;
+  player: string;
+  opponent: string | null;
+  ai_difficulty: DifficultyObject;
 }
 
 type Board = Array<Array<Space>>;
@@ -55,6 +66,7 @@ export class Game {
   isPlaying: boolean = false;
   turnCount: number = 0;
   gameOverText: string = '';
+  gameId: number = -1;
 
   constructor(private supabase: SupabaseService) {
 
@@ -147,17 +159,21 @@ export class Game {
 
   async aiOptionsSubmit() {
     this.aiOptionsScreen.nativeElement.close();
-    const { data, error } = await this.supabase
+
+    const data: GameDB | null = (await this.supabase
       .getSupabaseClient()
       .from('games')
       .insert([
         {
           ai_difficulty: {
             difficulty: this.aiSearchDepth
-          }
+          },
+          moves: []
         }
       ])
-      .select();
+      .select())
+      .data![0] as GameDB | null;
+    if (data) this.gameId = data.id;
     this.isPlaying = true;
   }
 
@@ -188,7 +204,8 @@ export class Game {
     return board;
   }
 
-  pressed(col: number, row: number) {
+  async pressed(col: number, row: number) {
+    const initialValue = this.board[row][col].value;
     const currentPlayer = this.players[this.turnCount%this.players.length];
     if (this.isCustom && this.turnCount < this.players.length) {
       this.board[row][col].value = 3;
@@ -200,8 +217,35 @@ export class Game {
       if (this.board[row][col].player.id != currentPlayer.id) return;
       if (this.board[row][col].value != 0) this.board[row][col].value++;
     }
+    this.addMove(col, row, initialValue)
     const cycles = this.calculateCycles(structuredClone(this.board));
     this.renderCycles(cycles);
+    console.log(this.gameId)
+  }
+
+  async addMove(col: number, row: number, value: number) {
+    if (this.isAi && this.gameId && this.board[row][col].player) {
+      const { data: game, error: fetchError } = await this.supabase.getSupabaseClient()
+        .from('games')
+        .select('moves')
+        .eq('id', this.gameId)
+        .single();
+
+      const newMove: Move = {
+        col,
+        row,
+        value: value,
+        player: this.board[row][col].player
+      }
+      const updatedMoves = [...(game?.moves || []), newMove];
+      console.log(updatedMoves)
+      console.log(await this.supabase
+        .getSupabaseClient()
+        .from('games')
+        .update({moves: updatedMoves})
+        .eq('id', this.gameId)
+        .select());
+    }
   }
 
   switchPlayer() {
@@ -214,7 +258,10 @@ export class Game {
         console.time("AI Search");
         const bestMoves = this.minimax(structuredClone(this.board), this.aiSearchDepth, true, this.players[1], this.players[0], -Infinity, Infinity);
         console.timeEnd("AI Search");
-        this.board = this.increase(bestMoves[1][0].col, bestMoves[1][0].row, this.board);
+
+        const bestMove = bestMoves[1][0];
+        this.addMove(bestMove.col, bestMove.row, this.board[bestMove.row][bestMove.col].value)
+        this.board = this.increase(bestMove.col, bestMove.row, this.board);
         const cycles = this.calculateCycles(structuredClone(this.board));
         this.renderCycles(cycles, false);
       }, 500);
