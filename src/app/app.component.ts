@@ -16,12 +16,14 @@ export class AppComponent {
   title = 'dadotz-angular';
   userData: User | undefined | null;
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.userData = this.auth.user.getValue();
+      console.log(this.userData)
+    }, 100)
+  }
+
   constructor(private auth: AuthService, private router: Router) {
-    this.auth.currentUser.subscribe(user => {
-      if (this.userData) return;
-      console.log(user)
-      this.userData = user;
-    })
   }
 
   signOut() {

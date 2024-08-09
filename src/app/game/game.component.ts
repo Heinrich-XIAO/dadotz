@@ -1,11 +1,16 @@
 import { Component, ElementRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseService } from '../supabase.service';
 
 interface Player {
   id: number;
   color: string;
   name: string;
+  isAI: boolean;
 }
 
 interface Space {
@@ -13,6 +18,13 @@ interface Space {
   row: number;
   value: number;
   player?: Player;
+}
+
+interface Move {
+  col: number;
+  row: number;
+  value: number;
+  player: Player;
 }
 
 type Board = Array<Array<Space>>;
@@ -43,6 +55,10 @@ export class Game {
   isPlaying: boolean = false;
   turnCount: number = 0;
   gameOverText: string = '';
+
+  constructor(private supabase: SupabaseService) {
+
+  }
 
   ngAfterViewInit() {
     const elementsArray = this.gridSpaces.toArray();
@@ -117,6 +133,7 @@ export class Game {
       this.aiOptionsScreen.nativeElement.showModal();
       this.isAi = true;
       this.players = this.populatePlayers(2);
+      this.players[1].isAI = true;
     } else {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
@@ -125,11 +142,23 @@ export class Game {
   }
 
   populatePlayers(playerCount: number): Array<Player> {
-    return Array.from({length: playerCount}, (_, index:number) => ({id: index, color: this.playerColors[index], name: this.playerNames[index]}));
+    return Array.from({length: playerCount}, (_, index:number) => ({id: index, color: this.playerColors[index], name: this.playerNames[index], isAI: false}));
   }
 
-  aiOptionsSubmit() {
+  async aiOptionsSubmit() {
     this.aiOptionsScreen.nativeElement.close();
+    const { data, error } = await this.supabase
+      .getSupabaseClient()
+      .from('games')
+      .insert([
+        {
+          ai_difficulty: {
+            difficulty: this.aiSearchDepth
+          }
+        }
+      ])
+      .select();
+    console.log(data, error)
     this.isPlaying = true;
   }
 
