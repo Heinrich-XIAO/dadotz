@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, ViewChildren, QueryList, Pipe } from 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../supabase.service';
+import { AuthService } from '../auth.service';
 
 interface Player {
   id: number;
@@ -66,9 +67,9 @@ export class Game {
   isPlaying: boolean = false;
   turnCount: number = 0;
   gameOverText: string = '';
-  gameId: number = -1;
+  gameId: number | null = null;
 
-  constructor(private supabase: SupabaseService) {
+  constructor(private supabase: SupabaseService, private auth: AuthService) {
 
   }
 
@@ -160,20 +161,24 @@ export class Game {
   async aiOptionsSubmit() {
     this.aiOptionsScreen.nativeElement.close();
 
-    const data: GameDB | null = (await this.supabase
-      .getSupabaseClient()
-      .from('games')
-      .insert([
-        {
-          ai_difficulty: {
-            difficulty: this.aiSearchDepth
-          },
-          moves: []
-        }
-      ])
-      .select())
-      .data![0] as GameDB | null;
-    if (data) this.gameId = data.id;
+    if (this.auth.user.getValue()) {
+      const data: GameDB | null = (await this.supabase
+        .getSupabaseClient()
+        .from('games')
+        .insert([
+          {
+            ai_difficulty: {
+              difficulty: this.aiSearchDepth
+            },
+            moves: []
+          }
+        ])
+        .select())
+        .data![0] as GameDB | null;
+      if (data) this.gameId = data.id;
+    } else {
+      this.gameId = null;
+    }
     this.isPlaying = true;
   }
 
@@ -238,13 +243,12 @@ export class Game {
         player: this.board[row][col].player
       }
       const updatedMoves = [...(game?.moves || []), newMove];
-      console.log(updatedMoves)
-      console.log(await this.supabase
+      await this.supabase
         .getSupabaseClient()
         .from('games')
         .update({moves: updatedMoves})
         .eq('id', this.gameId)
-        .select());
+        .select();
     }
   }
 

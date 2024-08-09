@@ -14,11 +14,11 @@ export class AuthService {
       const currentSession = await this.supabase.getSupabaseClient().auth.getSession();
       if (currentSession.error) throw currentSession.error;
 
-      this.user = new BehaviorSubject<User | null>(currentSession.data.session?.user || null);
+      this.user = new BehaviorSubject<User | null>((currentSession.data.session ? currentSession.data.session.user : null) || null);
 
       this.supabase.getSupabaseClient().auth.onAuthStateChange((event, session) => {
         if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          this.user.next(session!.user);
+          if (session) this.user.next(session!.user);
         } else {
           this.user.next(null);
         }
