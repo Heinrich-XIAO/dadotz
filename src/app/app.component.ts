@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Game } from '../app/game/game.component';
 import { AuthService } from './auth.service';
 import { User } from '@supabase/supabase-js';
@@ -8,7 +8,7 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Game, NgIf],
+  imports: [RouterOutlet, Game, NgIf, RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

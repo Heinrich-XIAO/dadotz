@@ -1,6 +1,6 @@
 <div class="sidebar">
-  <a href="/">Home</a>
-  <a *ngIf="userData == null" href="/signup">Signup</a>
+  <a routerLink="/">Home</a>
+  <a *ngIf="userData == null" routerLink="/signup">Signup</a>
   <form *ngIf="userData != undefined">
     <button (click)="signOut()" type="button">Logout</button>
   </form>
