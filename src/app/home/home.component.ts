@@ -10,5 +10,5 @@ import { Game } from '../../app/game/game.component';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  title = 'dadotz-angular';
+  title = 'home';
 }

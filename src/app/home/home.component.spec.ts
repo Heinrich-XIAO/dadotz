@@ -1,29 +1,29 @@
 import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './home.component';
+import { HomeComponent } from './home.component';
 
 describe('HomeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [HomeComponent],
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(HomeComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'dadotz-angular' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  it(`should have the 'dadotz' title`, () => {
+    const fixture = TestBed.createComponent(HomeComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('dadotz-angular');
+    expect(app.title).toEqual('dadotz');
   });
 
   it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(HomeComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, dadotz-angular');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, dadotz');
   });
 });

@@ -13,7 +13,7 @@ import { NgIf } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'dadotz-angular';
+  title = 'dadotz';
   userData: User | undefined | null;
 
   ngAfterViewInit() {
