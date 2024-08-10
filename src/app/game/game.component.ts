@@ -272,12 +272,22 @@ export class Game {
     }
   }
 
-  gameOver(player: Player) {
+  async gameOver(player: Player) {
     if (this.isAi) {
       if (player.id == 0) this.gameOverText = "You Won!"
       else this.gameOverText = "AI Won!"
     } else this.gameOverText = `${player.name} Won!`
     this.gameOverScreen.nativeElement.showModal();
+
+    if (this.isAi && this.gameId) {
+      console.log("setting end time")
+      await this.supabase
+        .getSupabaseClient()
+        .from('games')
+        .update({ended_at: new Date().toISOString()})
+        .eq('id', this.gameId)
+        .select();
+    }
   }
 
   renderCycles(cycles: Array<Array<Space>>, callNextPlayer: boolean=true) {
