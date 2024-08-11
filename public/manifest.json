@@ -41,5 +41,12 @@
       "type": "image/x-icon"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/gameplay.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
   "id": "dadotz"
 }
