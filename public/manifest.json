@@ -11,7 +11,9 @@
   "start_url": "/",
   "theme_color": "#f54e42",
   "lang": "en-US",
-  "launch_handler": "auto",
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
