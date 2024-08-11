@@ -1,4 +1,5 @@
 {
+  "id": "dadotz"
   "background_color": "#2b2b2b",
   "description": "Play DaDotz, a fun board game where tiles explode when they reach 4. Click to grow tiles and strategize your moves! Created by Heinz Ketchup.",
   "dir": "ltr",
@@ -10,6 +11,7 @@
   "start_url": "/",
   "theme_color": "#f54e42",
   "lang": "en-US",
+  "launch_handler": "auto",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -49,5 +51,4 @@
       "type": "image/png"
     }
   ],
-  "id": "dadotz"
 }
