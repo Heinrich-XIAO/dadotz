@@ -51,4 +51,8 @@
       "type": "image/png"
     }
   ],
+  "scope_extensions": [
+    {"origin": "dadotz.ca"},
+    {"origin": "*.dadotz.ca"}
+  ]
 }
