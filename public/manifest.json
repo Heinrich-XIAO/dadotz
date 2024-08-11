@@ -9,6 +9,7 @@
   "short_name": "DaDotz",
   "start_url": "/",
   "theme_color": "#f54e42",
+  "lang": "en-US",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
