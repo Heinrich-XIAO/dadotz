@@ -55,5 +55,11 @@
     {"origin": "dadotz.ca"},
     {"origin": "*.dadotz.ca"}
   ],
-  "categories": ["games", "entertainment"]
+  "categories": ["games", "entertainment"],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.JindoBlu.FourPlayers"
+    }
+  ]
 }
