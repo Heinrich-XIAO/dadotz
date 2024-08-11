@@ -54,5 +54,6 @@
   "scope_extensions": [
     {"origin": "dadotz.ca"},
     {"origin": "*.dadotz.ca"}
-  ]
+  ],
+  "categories": ["games", "entertainment"]
 }
