@@ -144,6 +144,7 @@ export class Game {
   start(playerCount: number) {
     if (playerCount == 1) {
       this.aiOptionsScreen.nativeElement.showModal();
+      this.aiOptionsScreen.nativeElement.focus();
       this.isAi = true;
       this.players = this.populatePlayers(2);
       this.players[1].isAI = true;
