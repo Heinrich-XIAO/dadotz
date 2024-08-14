@@ -17,9 +17,13 @@ export class AppComponent {
   userData: User | undefined | null;
 
   ngAfterViewInit() {
-    setTimeout(() => {
+    const checkUserData = () => {
       this.userData = this.auth.user.getValue();
-    }, 100)
+      if (this.userData == null) {
+        setTimeout(checkUserData, 100);
+      }
+    }
+    setTimeout(checkUserData, 100)
   }
 
   constructor(private auth: AuthService, private router: Router) {

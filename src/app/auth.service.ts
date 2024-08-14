@@ -17,6 +17,7 @@ export class AuthService {
       this.user = new BehaviorSubject<User | null>((currentSession.data.session ? currentSession.data.session.user : null) || null);
 
       this.supabase.getSupabaseClient().auth.onAuthStateChange((event, session) => {
+        console.log(event, session);
         if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (session) this.user.next(session!.user);
         } else {

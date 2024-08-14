@@ -209,7 +209,18 @@ input[type="submit"] {
     position: relative;
   }
   .sidebar * {float: left;}
-  div#content {margin-left: 0 !important; width: 100% !important;}
+  div#content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .profile_button {
+    right: 0px;
+    float: right;
+    height: 50px !important;
+    width: 50px !important;
+    bottom: auto !important;
+  }
 }
 
 div#content {
@@ -263,6 +274,8 @@ div#content {
   display: flex;
   justify-content: center;
   align-items: center;
+  bottom: 0px;
+  position: absolute;
 }
 
 .tooltip {
