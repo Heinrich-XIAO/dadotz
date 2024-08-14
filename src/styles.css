@@ -264,3 +264,39 @@ div#content {
   justify-content: center;
   align-items: center;
 }
+
+.tooltip {
+  border-radius: 50%;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #fff;
+  color: #fff;
+  height: 15px;
+  width: 15px;
+  text-align: center;
+  font-size: 12px;
+  float: right;
+  transform: translateY(-15px);
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position above the question mark */
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1
+}

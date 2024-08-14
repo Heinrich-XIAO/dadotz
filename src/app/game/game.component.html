@@ -14,6 +14,10 @@
   <button class="playerCountOption" (click)="start(2)">2 Player</button>
   <button class="playerCountOption" (click)="start(3)">3 Player</button>
   <button class="playerCountOption" (click)="start(4)">4 Player</button>
+  <div class="tooltip">
+    <span style="cursor: help;">?</span>
+    <span class="tooltip-text">Play against the AI on difficulty 1 as red. Click your squares to add dotz. When a square hits 4 dotz, it explodes, adding dotz to neighbors and taking over opponent's squares. Explosions can affect neighboring squares in one turn.</span>
+  </div>
   <br/>
   <select [(ngModel)]="startPosition" name="startPos" id="startPosSelect">
     <option value="pickaxe">The Pickaxe (recommended)</option>
