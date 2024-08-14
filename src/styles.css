@@ -307,8 +307,8 @@ div#content {
     padding: 5px;
     position: absolute;
     z-index: 1;
-    bottom: 125%; /* Position above the question mark */
-    left: 50%;
+    right: 125%; /* Position above the question mark */
+    bottom: 0;
     margin-left: -100px;
     opacity: 0;
     transition: opacity 0.3s;
