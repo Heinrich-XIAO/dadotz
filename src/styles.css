@@ -205,13 +205,18 @@ input[type="submit"] {
 @media screen and (max-width: 700px) {
   .sidebar {
     width: 100%;
-    height: auto;
+    height: 55px;
     position: relative;
   }
-  .sidebar * {float: left;}
+
+  .sidebar * {
+    float: left;
+  }
+
   div#content {
     margin-left: 0 !important;
     width: 100% !important;
+    height: calc(100% - 55px)
   }
 
   .profile_button {
