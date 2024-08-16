@@ -16,7 +16,7 @@
   <button class="playerCountOption" (click)="start(4)">4 Player</button>
   <div class="tooltip">
     <span style="cursor: help">?</span>
-    <span class="tooltip-text">Play against the AI on difficulty 1 as red. Click your squares to add dotz. When a square hits 4 dotz, it explodes, adding dotz to neighbors and taking over opponent's squares. Explosions can affect neighboring squares in one turn.</span>
+    <span class="tooltip-text">If this is your first time playing, play against the AI on difficulty 2 as red. Click your squares to add dotz. When a square hits 4 dotz, it explodes, adding dotz to neighbors and taking over opponent's squares. Explosions can affect neighboring squares in one turn.</span>
   </div>
   <br/>
   <select [(ngModel)]="startPosition" name="startPos" id="startPosSelect">
@@ -32,9 +32,9 @@
   </div>
 </dialog>
 <dialog #aiOptionsScreen>
-  <label for="aiSearchDepth">AI Difficulty: </label>
+  <label for="aiDifficulty">AI Difficulty: </label>
 
-  <input type="number" id="aiSearchDepth" [(ngModel)]="aiSearchDepth" min="1" max="7">
+  <input type="number" id="aiDifficulty" [(ngModel)]="aiDifficulty" min="1" max="10">
   <br>
   <input (click)="aiOptionsSubmit()" type="submit" value="Submit"/>
 </dialog>

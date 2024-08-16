@@ -60,7 +60,7 @@ export class Game {
   boardHeight: number = 7;
   isCustom: boolean = false;
   players: Player[] = [];
-  aiSearchDepth: number = 2;
+  aiDifficulty: number = 2;
   startPosition: string = "pickaxe";
   board: Array<Array<Space>> = Array.from({ length: this.boardHeight }, (_, row) => Array.from({ length: this.boardWidth }, (_, col) => ({col,row,value:0})));
   boardElements: ElementRef[][] = [];
@@ -169,7 +169,7 @@ export class Game {
         .insert([
           {
             ai_difficulty: {
-              difficulty: this.aiSearchDepth
+              difficulty: this.aiDifficulty
             },
             moves: []
           }
@@ -261,7 +261,7 @@ export class Game {
     if (this.isAi && this.turnCount%2==1) {
       setTimeout(() => {
         console.time("AI Search");
-        const bestMoves = this.minimax(structuredClone(this.board), this.aiSearchDepth, true, this.players[1], this.players[0], -Infinity, Infinity);
+        const bestMoves = this.minimax(structuredClone(this.board), 4, true, this.players[1], this.players[0], -Infinity, Infinity, this.aiDifficulty);
         console.timeEnd("AI Search");
 
         const bestMove = bestMoves[1][0];
@@ -351,20 +351,28 @@ export class Game {
     return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length + this.getAllOfPlayer(board, opp).length;
   }
 
-  minimax(position: Board, depth: number, isMax: boolean, maxPlayer: Player, minPlayer: Player, alpha: number, beta: number): [number, Array<Space>] {
-    if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) return [this.staticEval(position, maxPlayer, minPlayer), []];
+  minimax(position: Board, depth: number, isMax: boolean, maxPlayer: Player, minPlayer: Player, alpha: number, beta: number, difficulty: number): [number, Array<Space>] {
+    if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) {
+      return [this.staticEval(position, maxPlayer, minPlayer), []];
+    }
+
     if (isMax) {
       let maxEval: number = -Infinity;
       let bestMoveSequence: Array<Space> = [];
       const possibleMoves: Array<Space> = this.getAllOfPlayer(position, maxPlayer);
-      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space)=>this.checkResponse(position, cell));
+      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space) => this.checkResponse(position, cell));
+
       for (let i = 0; i < outcomes.length; i++) {
-        const childEval = this.minimax(outcomes[i], depth-1, false, maxPlayer, minPlayer, alpha, beta);
-        alpha = Math.max(alpha, childEval[0]);
-        if (childEval[0] > maxEval) {
-          maxEval = childEval[0];
+        const childEval = this.minimax(outcomes[i], depth - 1, false, maxPlayer, minPlayer, alpha, beta, difficulty);
+        const noisyEval = childEval[0] + (Math.random() - 0.5) * (10 - difficulty); // Adds a noise factor based on difficulty
+
+        alpha = Math.max(alpha, noisyEval);
+
+        if (noisyEval > maxEval) {
+          maxEval = noisyEval;
           bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
         }
+
         if (beta <= alpha) break;
       }
       return [maxEval, bestMoveSequence];
@@ -372,14 +380,19 @@ export class Game {
       let minEval: number = Infinity;
       let bestMoveSequence: Array<Space> = [];
       const possibleMoves: Array<Space> = this.getAllOfPlayer(position, minPlayer);
-      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space)=>this.checkResponse(position, cell));
+      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space) => this.checkResponse(position, cell));
+
       for (let i = 0; i < outcomes.length; i++) {
-        const childEval = this.minimax(outcomes[i], depth-1, true, maxPlayer, minPlayer, alpha, beta);
-        beta = Math.min(beta, childEval[0]);
-        if (childEval[0] < minEval) {
-          minEval = childEval[0];
+        const childEval = this.minimax(outcomes[i], depth - 1, true, maxPlayer, minPlayer, alpha, beta, difficulty);
+        const noisyEval = childEval[0] + (Math.random() - 0.5) * (10 - difficulty); // Adds a noise factor based on difficulty
+
+        beta = Math.min(beta, noisyEval);
+
+        if (noisyEval < minEval) {
+          minEval = noisyEval;
           bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
         }
+
         if (beta <= alpha) break;
       }
       return [minEval, bestMoveSequence];
