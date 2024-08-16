@@ -263,6 +263,7 @@ export class Game {
     const hasWon = this.hasWon(this.board);
     if (hasWon) {
       this.gameOver(hasWon);
+      return;
     }
     if (this.isAi && this.turnCount%2==1) {
       setTimeout(() => {
