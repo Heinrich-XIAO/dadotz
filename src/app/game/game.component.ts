@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../supabase.service';
 import { AuthService } from '../auth.service';
+import { withFetch } from '@angular/common/http';
 
 interface Player {
   id: number;
@@ -68,6 +69,7 @@ export class Game {
   turnCount: number = 0;
   gameOverText: string = '';
   gameId: number | null = null;
+  canGoYet: boolean = true;
 
   constructor(private supabase: SupabaseService, private auth: AuthService) {
 
@@ -217,6 +219,7 @@ export class Game {
       this.board[row][col].value = 3;
       this.board[row][col].player = currentPlayer;
     } else {
+      if (!this.canGoYet) return;
       if (!this.board[row][col].player) return;
       if (this.board[row][col].value >= 4) return;
       if (currentPlayer.id == 1 && this.isAi) return;
@@ -225,8 +228,11 @@ export class Game {
     }
     this.addMove(col, row, initialValue)
     const cycles = this.calculateCycles(structuredClone(this.board));
-    this.renderCycles(cycles);
-    console.log(this.gameId)
+    this.canGoYet = false;
+    this.renderCycles(cycles, () => {
+      this.canGoYet = true;
+      console.log("Player went")
+    });
   }
 
   async addMove(col: number, row: number, value: number) {
@@ -268,7 +274,11 @@ export class Game {
         this.addMove(bestMove.col, bestMove.row, this.board[bestMove.row][bestMove.col].value)
         this.board = this.increase(bestMove.col, bestMove.row, this.board);
         const cycles = this.calculateCycles(structuredClone(this.board));
-        this.renderCycles(cycles, false);
+        this.canGoYet = false;
+        this.renderCycles(cycles, () => {
+          console.log("ai went");
+          this.canGoYet = true;
+        }, false);
       }, 500);
     }
   }
@@ -291,9 +301,10 @@ export class Game {
     }
   }
 
-  renderCycles(cycles: Array<Array<Space>>, callNextPlayer: boolean=true) {
+  renderCycles(cycles: Array<Array<Space>>, callback: ()=>void, callNextPlayer: boolean=true) {
     if (cycles.length == 0 || cycles[0].length == 0) {
       this.turnCount++;
+      callback();
       if (callNextPlayer) this.switchPlayer();
       else {
         const hasWon = this.hasWon(this.board);
@@ -307,7 +318,7 @@ export class Game {
       for (let i = 0; i < cycles[0].length; i++) {
         this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
       }
-      this.renderCycles(cycles.slice(1), callNextPlayer)
+      this.renderCycles(cycles.slice(1), callback, callNextPlayer)
     }, 250);
   }
 
