@@ -227,7 +227,7 @@ export class Game {
       if (this.board[row][col].value != 0) this.board[row][col].value++;
     }
     this.addMove(col, row, initialValue)
-    const cycles = this.calculateCycles(structuredClone(this.board));
+    const cycles = this.calculateCycles(this.cloneBoard(this.board));
     this.canGoYet = false;
     this.renderCycles(cycles, () => {
       this.canGoYet = true;
@@ -348,10 +348,21 @@ export class Game {
     );
   }
 
+  cloneBoard(array: Space[][]): Space[][] {
+    return array.map(row =>
+        row.map(space => ({
+            col: space.col,
+            row: space.row,
+            value: space.value,
+            player: space.player // clone player if needed, otherwise pass by reference
+        }))
+    );
+  }
+
   checkResponse(board: Board, cell: Space) {
-    let boardCopy = structuredClone(board);
+    let boardCopy = this.cloneBoard(board);
     boardCopy = this.increase(cell.col, cell.row, boardCopy);
-    this.calculateCycleResponse(this.calculateCycles(structuredClone(boardCopy)), boardCopy);
+    this.calculateCycleResponse(this.calculateCycles(this.cloneBoard(boardCopy)), boardCopy);
     return boardCopy;
   }
 
