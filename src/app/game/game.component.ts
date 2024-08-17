@@ -70,6 +70,7 @@ export class Game {
   gameOverText: string = '';
   gameId: number | null = null;
   canGoYet: boolean = true;
+  help: boolean = true;
 
   constructor(private supabase: SupabaseService, private auth: AuthService) {
 
@@ -440,6 +441,10 @@ export class Game {
   evalBarWidth() {
     if (this.isCustom && this.turnCount < this.players.length) return "50%"
     return Math.round(this.getAllOfPlayer(this.board, this.players[0]).length/(this.getAllOfPlayer(this.board, this.players[0]).length+this.getAllOfPlayer(this.board, this.players[1]).length)*100)+'%';
+  }
+
+  toggleHelp() {
+    this.help = !this.help;
   }
 }
 

@@ -314,7 +314,7 @@ div#content {
     transition: opacity 0.3s;
 }
 
-.tooltip:hover .tooltip-text {
+.tooltip.tooltip-hover .tooltip-text {
   visibility: visible;
   opacity: 1
 }
