@@ -318,3 +318,40 @@ div#content {
   visibility: visible;
   opacity: 1
 }
+
+.gameDisplay {
+  background-color: #fff;
+  color: #000;
+  border-width: 0px;
+  border-radius: 10px;
+  width: 200px;
+  height: 100px;
+}
+
+.gameDisplay .metadata {
+  color: #333;
+  font-size: 13px;
+}
+
+.gameDisplay .title {
+  color: #000;
+  font-size: 16px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

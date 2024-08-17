@@ -3,44 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../supabase.service';
 import { AuthService } from '../auth.service';
+import * as types from '../../types';
 import { withFetch } from '@angular/common/http';
-
-interface Player {
-  id: number;
-  color: string;
-  name: string;
-  isAI: boolean;
-}
-
-interface Space {
-  col: number;
-  row: number;
-  value: number;
-  player?: Player;
-}
-
-interface Move {
-  col: number;
-  row: number;
-  value: number;
-  player: Player;
-}
-
-type DifficultyObject = {
-  difficulty: number;
-};
-
-type GameDB = {
-  id: number;
-  created_at: string;
-  ended_at: string | null;
-  moves: Array<Move>;
-  player: string;
-  opponent: string | null;
-  ai_difficulty: DifficultyObject;
-}
-
-type Board = Array<Array<Space>>;
 
 @Component({
   selector: 'app-game',
@@ -60,10 +24,10 @@ export class Game {
   boardWidth: number = 7;
   boardHeight: number = 7;
   isCustom: boolean = false;
-  players: Player[] = [];
+  players: types.Player[] = [];
   aiDifficulty: number = 2;
   startPosition: string = "pickaxe";
-  board: Array<Array<Space>> = Array.from({ length: this.boardHeight }, (_, row) => Array.from({ length: this.boardWidth }, (_, col) => ({col,row,value:0})));
+  board: Array<Array<types.Space>> = Array.from({ length: this.boardHeight }, (_, row) => Array.from({ length: this.boardWidth }, (_, col) => ({col,row,value:0})));
   boardElements: ElementRef[][] = [];
   isPlaying: boolean = false;
   turnCount: number = 0;
@@ -158,7 +122,7 @@ export class Game {
     this.initializeBoardVariant(this.startPosition, this.players.length);
   }
 
-  populatePlayers(playerCount: number): Array<Player> {
+  populatePlayers(playerCount: number): Array<types.Player> {
     return Array.from({length: playerCount}, (_, index:number) => ({id: index, color: this.playerColors[index], name: this.playerNames[index], isAI: false}));
   }
 
@@ -166,7 +130,7 @@ export class Game {
     this.aiOptionsScreen.nativeElement.close();
 
     if (this.auth.user.getValue()) {
-      const data: GameDB | null = (await this.supabase
+      const data: types.Game | null = (await this.supabase
         .getSupabaseClient()
         .from('games')
         .insert([
@@ -178,7 +142,7 @@ export class Game {
           }
         ])
         .select())
-        .data![0] as GameDB | null;
+        .data![0] as types.Game | null;
       if (data) this.gameId = data.id;
     } else {
       this.gameId = null;
@@ -186,19 +150,19 @@ export class Game {
     this.isPlaying = true;
   }
 
-  setPlayer(col: number, row: number, board: Array<Array<Space>>, player: Player | undefined) {
+  setPlayer(col: number, row: number, board: Array<Array<types.Space>>, player: types.Player | undefined) {
     if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight) return board;
     board[row][col].player = player;
     return board;
   }
 
-  increase(col: number, row: number, board: Array<Array<Space>>) {
+  increase(col: number, row: number, board: Array<Array<types.Space>>) {
     if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight || board[row][col].value >= 4) return board;
     board[row][col].value++;
     return board;
   }
 
-  split(col: number, row: number, board: Array<Array<Space>>) {
+  split(col: number, row: number, board: Array<Array<types.Space>>) {
     const thisPlayer = board[row][col].player;
     board[row][col].value = 0;
     board = this.increase(col+1, row, board);
@@ -244,7 +208,7 @@ export class Game {
         .eq('id', this.gameId)
         .single();
 
-      const newMove: Move = {
+      const newMove: types.Move = {
         col,
         row,
         value: value,
@@ -285,7 +249,7 @@ export class Game {
     }
   }
 
-  async gameOver(player: Player) {
+  async gameOver(player: types.Player) {
     if (this.isAi) {
       if (player.id == 0) this.gameOverText = "You Won!"
       else this.gameOverText = "AI Won!"
@@ -303,7 +267,7 @@ export class Game {
     }
   }
 
-  renderCycles(cycles: Array<Array<Space>>, callback: ()=>void, callNextPlayer: boolean=true) {
+  renderCycles(cycles: Array<Array<types.Space>>, callback: ()=>void, callNextPlayer: boolean=true) {
     if (cycles.length == 0 || cycles[0].length == 0) {
       this.turnCount++;
       callback();
@@ -324,14 +288,14 @@ export class Game {
     }, 250);
   }
 
-  calculateCycles(board: Array<Array<Space>>): Array<Array<Space>> {
-    const squaresToSplit: Array<Space> = board.flat().filter(space => space.value == 4);
+  calculateCycles(board: Array<Array<types.Space>>): Array<Array<types.Space>> {
+    const squaresToSplit: Array<types.Space> = board.flat().filter(space => space.value == 4);
     for (let i = 0; i < squaresToSplit.length; i++) board = this.split(squaresToSplit[i].col, squaresToSplit[i].row, board);
     if (board.flat().filter(space => space.value == 4).length > 0) return [squaresToSplit].concat(this.calculateCycles(structuredClone(board)));
     return [squaresToSplit];
   }
 
-  calculateCycleResponse(cycles: Array<Array<Space>>, board: Board) {
+  calculateCycleResponse(cycles: Array<Array<types.Space>>, board: types.Board) {
     if (cycles.length == 0) return;
     for (let i = 0; i < cycles[0].length; i++) {
       board = this.split(cycles[0][i].col, cycles[0][i].row, board);
@@ -339,17 +303,17 @@ export class Game {
     this.calculateCycleResponse(cycles.slice(1), board);
   }
 
-  isGameOver(board: Board, player: Player, opponent: Player): boolean {
+  isGameOver(board: types.Board, player: types.Player, opponent: types.Player): boolean {
     return this.getAllOfPlayer(board, opponent).length == 0 || this.getAllOfPlayer(board, player).length == 0;
   }
 
-  getAllOfPlayer(board: Board, player: Player): Array<Space> {
+  getAllOfPlayer(board: types.Board, player: types.Player): Array<types.Space> {
     return board.flatMap((row) =>
       row.filter((cell) => cell.player && cell.player.id === player.id && cell.value !== 0)
     );
   }
 
-  cloneBoard(array: Space[][]): Space[][] {
+  cloneBoard(array: types.Space[][]): types.Space[][] {
     return array.map(row =>
         row.map(space => ({
             col: space.col,
@@ -360,31 +324,31 @@ export class Game {
     );
   }
 
-  checkResponse(board: Board, cell: Space) {
+  checkResponse(board: types.Board, cell: types.Space) {
     let boardCopy = this.cloneBoard(board);
     boardCopy = this.increase(cell.col, cell.row, boardCopy);
     this.calculateCycleResponse(this.calculateCycles(this.cloneBoard(boardCopy)), boardCopy);
     return boardCopy;
   }
 
-  staticEval(board: Board, player: Player, opp: Player): number {
+  staticEval(board: types.Board, player: types.Player, opp: types.Player): number {
     return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length - this.getAllOfPlayer(board, opp).length;
   }
 
-  maxPossibleStaticEval(board: Board, player: Player, opp: Player): number {
+  maxPossibleStaticEval(board: types.Board, player: types.Player, opp: types.Player): number {
     return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length + this.getAllOfPlayer(board, opp).length;
   }
 
-  minimax(position: Board, depth: number, isMax: boolean, maxPlayer: Player, minPlayer: Player, alpha: number, beta: number, difficulty: number): [number, Array<Space>] {
+  minimax(position: types.Board, depth: number, isMax: boolean, maxPlayer: types.Player, minPlayer: types.Player, alpha: number, beta: number, difficulty: number): [number, Array<types.Space>] {
     if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) {
       return [this.staticEval(position, maxPlayer, minPlayer), []];
     }
 
     if (isMax) {
       let maxEval: number = -Infinity;
-      let bestMoveSequence: Array<Space> = [];
-      const possibleMoves: Array<Space> = this.getAllOfPlayer(position, maxPlayer);
-      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space) => this.checkResponse(position, cell));
+      let bestMoveSequence: Array<types.Space> = [];
+      const possibleMoves: Array<types.Space> = this.getAllOfPlayer(position, maxPlayer);
+      const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map((cell: types.Space) => this.checkResponse(position, cell));
 
       for (let i = 0; i < outcomes.length; i++) {
         const childEval = this.minimax(outcomes[i], depth - 1, false, maxPlayer, minPlayer, alpha, beta, difficulty);
@@ -402,9 +366,9 @@ export class Game {
       return [maxEval, bestMoveSequence];
     } else {
       let minEval: number = Infinity;
-      let bestMoveSequence: Array<Space> = [];
-      const possibleMoves: Array<Space> = this.getAllOfPlayer(position, minPlayer);
-      const outcomes: Array<Array<Array<Space>>> = possibleMoves.map((cell: Space) => this.checkResponse(position, cell));
+      let bestMoveSequence: Array<types.Space> = [];
+      const possibleMoves: Array<types.Space> = this.getAllOfPlayer(position, minPlayer);
+      const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map((cell: types.Space) => this.checkResponse(position, cell));
 
       for (let i = 0; i < outcomes.length; i++) {
         const childEval = this.minimax(outcomes[i], depth - 1, true, maxPlayer, minPlayer, alpha, beta, difficulty);
@@ -423,7 +387,7 @@ export class Game {
     }
   }
 
-  hasWon(board: Board) {
+  hasWon(board: types.Board) {
     if (this.isCustom && this.turnCount < this.players.length) return false;
     let playersStillPlaying = 0;
     let winner;
