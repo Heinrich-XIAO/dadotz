@@ -32,6 +32,7 @@ export type Game = {
   opponent: string | null;
   ai_difficulty: DifficultyObject;
   winner?: string;
+  startpos: string;
 }
 
 export type Board = Array<Array<Space>>;

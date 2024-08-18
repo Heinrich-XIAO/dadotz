@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../supabase.service';
 import { AuthService } from '../auth.service';
 import * as types from '../../types';
-import { withFetch } from '@angular/common/http';
+import * as helpers from '../../helpers';
 
 @Component({
   selector: 'app-game',
@@ -60,52 +60,7 @@ export class Game {
     this.turnCount = 0;
     this.gameOverText = '';
     this.gameOverScreen.nativeElement.close();
-    this.initializeBoardVariant(this.startPosition, this.players.length);
-  }
-
-  initializeBoardVariant(variant: string, playerCount: number) {
-    if (variant == "custom") this.isCustom = true;
-    else if (variant == "pickaxe") {
-      this.board[1][1].player = structuredClone(this.players[0]);
-      this.split(1, 1,this.board);
-      this.split(0, 1,this.board);
-      this.split(1, 0,this.board);
-
-      this.board[this.boardWidth-2][this.boardHeight-2].player = structuredClone(this.players[1]);
-      this.split(this.boardWidth-2, this.boardHeight-2,this.board);
-      this.split(this.boardWidth-1, this.boardHeight-2,this.board);
-      this.split(this.boardWidth-2, this.boardHeight-1,this.board);
-
-      if (playerCount >= 3) {
-        this.board[1][this.boardHeight-2].player = structuredClone(this.players[2]);
-        this.split(this.boardWidth-2, 1, this.board);
-        this.split(this.boardWidth-1, 1, this.board);
-        this.split(this.boardWidth-2, 0, this.board);
-      }
-
-      if (playerCount >= 4) {
-        this.board[this.boardWidth-2][1].player = structuredClone(this.players[3]);
-        this.split(1, this.boardHeight-2, this.board);
-        this.split(0, this.boardHeight-2, this.board);
-        this.split(1, this.boardHeight-1, this.board);
-      }
-    } else if (variant == "corners") {
-      this.board[1][1].player = structuredClone(this.players[0]);
-      this.split(1, 1, this.board);
-
-      this.board[this.boardWidth-2][this.boardHeight-2].player = structuredClone(this.players[1]);
-      this.split(this.boardWidth-2, this.boardHeight-2, this.board);
-
-      if (playerCount >= 3) {
-        this.board[1][this.boardHeight-2].player = structuredClone(this.players[2]);
-        this.split(this.boardWidth-2, 1,this.board);
-      }
-
-      if (playerCount >= 4) {
-        this.board[this.boardWidth-2][1].player = structuredClone(this.players[3]);
-        this.split(1, this.boardHeight-2,this.board);
-      }
-    }
+    helpers.initializeBoardVariant(this.startPosition, this.players.length, this.board, this.players);
   }
 
   start(playerCount: number) {
@@ -119,7 +74,7 @@ export class Game {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
     }
-    this.initializeBoardVariant(this.startPosition, this.players.length);
+    helpers.initializeBoardVariant(this.startPosition, this.players.length, this.board, this.players);
   }
 
   populatePlayers(playerCount: number): Array<types.Player> {
@@ -138,7 +93,8 @@ export class Game {
             ai_difficulty: {
               difficulty: this.aiDifficulty
             },
-            moves: []
+            moves: [],
+            startpos: this.startPosition
           }
         ])
         .select())
@@ -148,33 +104,6 @@ export class Game {
       this.gameId = null;
     }
     this.isPlaying = true;
-  }
-
-  setPlayer(col: number, row: number, board: Array<Array<types.Space>>, player: types.Player | undefined) {
-    if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight) return board;
-    board[row][col].player = player;
-    return board;
-  }
-
-  increase(col: number, row: number, board: Array<Array<types.Space>>) {
-    if (col < 0 || col >= this.boardWidth || row < 0 || row >= this.boardHeight || board[row][col].value >= 4) return board;
-    board[row][col].value++;
-    return board;
-  }
-
-  split(col: number, row: number, board: Array<Array<types.Space>>) {
-    const thisPlayer = board[row][col].player;
-    board[row][col].value = 0;
-    board = this.increase(col+1, row, board);
-    board = this.increase(col-1, row, board);
-    board = this.increase(col, row+1, board);
-    board = this.increase(col, row-1, board);
-
-    board = this.setPlayer(col+1, row, board, thisPlayer);
-    board = this.setPlayer(col-1, row, board, thisPlayer);
-    board = this.setPlayer(col, row+1, board, thisPlayer);
-    board = this.setPlayer(col, row-1, board, thisPlayer);
-    return board;
   }
 
   async pressed(col: number, row: number) {
@@ -192,12 +121,12 @@ export class Game {
       if (this.board[row][col].value != 0) this.board[row][col].value++;
     }
     this.addMove(col, row, initialValue)
-    const cycles = this.calculateCycles(this.cloneBoard(this.board));
+    const cycles = helpers.calculateCycles(helpers.cloneBoard(this.board));
     this.canGoYet = false;
-    this.renderCycles(cycles, () => {
+    helpers.renderCycles(cycles, () => {
       this.canGoYet = true;
       console.log("Player went")
-    });
+    }, this);
   }
 
   async addMove(col: number, row: number, value: number) {
@@ -225,7 +154,7 @@ export class Game {
   }
 
   switchPlayer() {
-    const hasWon = this.hasWon(this.board);
+    const hasWon = helpers.hasWon(this.board, this);
     if (hasWon) {
       this.gameOver(hasWon);
       return;
@@ -233,18 +162,18 @@ export class Game {
     if (this.isAi && this.turnCount%2==1) {
       setTimeout(() => {
         console.time("AI Search");
-        const bestMoves = this.minimax(structuredClone(this.board), 4, true, this.players[1], this.players[0], -Infinity, Infinity, this.aiDifficulty);
+        const bestMoves = helpers.minimax(structuredClone(this.board), 4, true, this.players[1], this.players[0], -Infinity, Infinity, this.aiDifficulty);
         console.timeEnd("AI Search");
 
         const bestMove = bestMoves[1][0];
         this.addMove(bestMove.col, bestMove.row, this.board[bestMove.row][bestMove.col].value)
-        this.board = this.increase(bestMove.col, bestMove.row, this.board);
-        const cycles = this.calculateCycles(structuredClone(this.board));
+        this.board = helpers.increase(bestMove.col, bestMove.row, this.board);
+        const cycles = helpers.calculateCycles(structuredClone(this.board));
         this.canGoYet = false;
-        this.renderCycles(cycles, () => {
+        helpers.renderCycles(cycles, () => {
           console.log("ai went");
           this.canGoYet = true;
-        }, false);
+        }, this, false);
       }, 500);
     }
   }
@@ -267,148 +196,12 @@ export class Game {
     }
   }
 
-  renderCycles(cycles: Array<Array<types.Space>>, callback: ()=>void, callNextPlayer: boolean=true) {
-    if (cycles.length == 0 || cycles[0].length == 0) {
-      this.turnCount++;
-      callback();
-      if (callNextPlayer) this.switchPlayer();
-      else {
-        const hasWon = this.hasWon(this.board);
-        if (hasWon) {
-          this.gameOver(hasWon);
-        }
-      }
-      return;
-    }
-    setTimeout(() => {
-      for (let i = 0; i < cycles[0].length; i++) {
-        this.board = this.split(cycles[0][i].col, cycles[0][i].row, this.board);
-      }
-      this.renderCycles(cycles.slice(1), callback, callNextPlayer)
-    }, 250);
-  }
-
-  calculateCycles(board: Array<Array<types.Space>>): Array<Array<types.Space>> {
-    const squaresToSplit: Array<types.Space> = board.flat().filter(space => space.value == 4);
-    for (let i = 0; i < squaresToSplit.length; i++) board = this.split(squaresToSplit[i].col, squaresToSplit[i].row, board);
-    if (board.flat().filter(space => space.value == 4).length > 0) return [squaresToSplit].concat(this.calculateCycles(structuredClone(board)));
-    return [squaresToSplit];
-  }
-
-  calculateCycleResponse(cycles: Array<Array<types.Space>>, board: types.Board) {
-    if (cycles.length == 0) return;
-    for (let i = 0; i < cycles[0].length; i++) {
-      board = this.split(cycles[0][i].col, cycles[0][i].row, board);
-    }
-    this.calculateCycleResponse(cycles.slice(1), board);
-  }
-
-  isGameOver(board: types.Board, player: types.Player, opponent: types.Player): boolean {
-    return this.getAllOfPlayer(board, opponent).length == 0 || this.getAllOfPlayer(board, player).length == 0;
-  }
-
-  getAllOfPlayer(board: types.Board, player: types.Player): Array<types.Space> {
-    return board.flatMap((row) =>
-      row.filter((cell) => cell.player && cell.player.id === player.id && cell.value !== 0)
-    );
-  }
-
-  cloneBoard(array: types.Space[][]): types.Space[][] {
-    return array.map(row =>
-        row.map(space => ({
-            col: space.col,
-            row: space.row,
-            value: space.value,
-            player: space.player // clone player if needed, otherwise pass by reference
-        }))
-    );
-  }
-
-  checkResponse(board: types.Board, cell: types.Space) {
-    let boardCopy = this.cloneBoard(board);
-    boardCopy = this.increase(cell.col, cell.row, boardCopy);
-    this.calculateCycleResponse(this.calculateCycles(this.cloneBoard(boardCopy)), boardCopy);
-    return boardCopy;
-  }
-
-  staticEval(board: types.Board, player: types.Player, opp: types.Player): number {
-    return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) - this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length - this.getAllOfPlayer(board, opp).length;
-  }
-
-  maxPossibleStaticEval(board: types.Board, player: types.Player, opp: types.Player): number {
-    return this.getAllOfPlayer(board, player).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, opp).reduce((acc, cur)=>acc+cur.value, 0) + this.getAllOfPlayer(board, player).length + this.getAllOfPlayer(board, opp).length;
-  }
-
-  minimax(position: types.Board, depth: number, isMax: boolean, maxPlayer: types.Player, minPlayer: types.Player, alpha: number, beta: number, difficulty: number): [number, Array<types.Space>] {
-    if (depth == 0 || this.isGameOver(position, maxPlayer, minPlayer)) {
-      return [this.staticEval(position, maxPlayer, minPlayer), []];
-    }
-
-    if (isMax) {
-      let maxEval: number = -Infinity;
-      let bestMoveSequence: Array<types.Space> = [];
-      const possibleMoves: Array<types.Space> = this.getAllOfPlayer(position, maxPlayer);
-      const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map((cell: types.Space) => this.checkResponse(position, cell));
-
-      for (let i = 0; i < outcomes.length; i++) {
-        const childEval = this.minimax(outcomes[i], depth - 1, false, maxPlayer, minPlayer, alpha, beta, difficulty);
-        const noisyEval = childEval[0] + (Math.random() - 0.5) * (10 - difficulty); // Adds a noise factor based on difficulty
-
-        alpha = Math.max(alpha, noisyEval);
-
-        if (noisyEval > maxEval) {
-          maxEval = noisyEval;
-          bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
-        }
-
-        if (beta <= alpha) break;
-      }
-      return [maxEval, bestMoveSequence];
-    } else {
-      let minEval: number = Infinity;
-      let bestMoveSequence: Array<types.Space> = [];
-      const possibleMoves: Array<types.Space> = this.getAllOfPlayer(position, minPlayer);
-      const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map((cell: types.Space) => this.checkResponse(position, cell));
-
-      for (let i = 0; i < outcomes.length; i++) {
-        const childEval = this.minimax(outcomes[i], depth - 1, true, maxPlayer, minPlayer, alpha, beta, difficulty);
-        const noisyEval = childEval[0] + (Math.random() - 0.5) * (10 - difficulty); // Adds a noise factor based on difficulty
-
-        beta = Math.min(beta, noisyEval);
-
-        if (noisyEval < minEval) {
-          minEval = noisyEval;
-          bestMoveSequence = [possibleMoves[i]].concat(childEval[1]);
-        }
-
-        if (beta <= alpha) break;
-      }
-      return [minEval, bestMoveSequence];
-    }
-  }
-
-  hasWon(board: types.Board) {
-    if (this.isCustom && this.turnCount < this.players.length) return false;
-    let playersStillPlaying = 0;
-    let winner;
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.getAllOfPlayer(board, this.players[i]).length) {
-        playersStillPlaying++;
-        winner = this.players[i];
-      }
-      else continue;
-      if (playersStillPlaying>1) return false;
-    }
-    return winner;
+  toggleHelp() {
+    this.help = !this.help;
   }
 
   evalBarWidth() {
-    if (this.isCustom && this.turnCount < this.players.length) return "50%"
-    return Math.round(this.getAllOfPlayer(this.board, this.players[0]).length/(this.getAllOfPlayer(this.board, this.players[0]).length+this.getAllOfPlayer(this.board, this.players[1]).length)*100)+'%';
-  }
-
-  toggleHelp() {
-    this.help = !this.help;
+    return helpers.evalBarWidth(this);
   }
 }
 

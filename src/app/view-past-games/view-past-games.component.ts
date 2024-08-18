@@ -4,12 +4,12 @@ import { SupabaseService } from '../supabase.service';
 import * as types from '../../types';
 import { AuthService } from '../auth.service';
 import { AuthUser } from '@supabase/supabase-js';
-import { withFetch } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-view-past-games',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './view-past-games.component.html',
   styleUrl: './view-past-games.component.css'
 })
@@ -28,12 +28,14 @@ export class ViewPastGamesComponent {
     const {data, error} = await this.supabase.getSupabaseClient()
       .from('games')
       .select()
-      .eq('player', this.user.id);
+      .eq('player', this.user.id)
+      .not('ended_at', 'is', null);
 
 
     if (error) throw error;
 
     const games = data as types.Game[];
+    console.log(games)
 
     for (let i = 0; i < games.length; i++) {
       games[i].winner = games[i].moves[games[i].moves.length - 1].player.name;
