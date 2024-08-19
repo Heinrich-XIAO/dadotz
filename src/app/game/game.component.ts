@@ -125,6 +125,7 @@ export class Game {
       if (currentPlayer.id == 1 && this.isAi) return;
       if (this.board[row][col].player.id != currentPlayer.id) return;
       if (this.board[row][col].value != 0) this.board[row][col].value++;
+      else return
     }
     this.addMove(col, row, initialValue)
     const cycles = helpers.calculateCycles(helpers.cloneBoard(this.board));
