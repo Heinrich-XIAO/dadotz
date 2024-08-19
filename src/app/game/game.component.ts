@@ -35,6 +35,7 @@ export class Game {
   gameId: number | null = null;
   canGoYet: boolean = true;
   help: boolean = true;
+  disabledUserInteraction: boolean = false;
 
   constructor(private supabase: SupabaseService, private auth: AuthService) {
 
@@ -106,7 +107,7 @@ export class Game {
     this.isPlaying = true;
   }
 
-  async pressed(col: number, row: number) {
+  async doMove(col: number, row: number) {
     const initialValue = this.board[row][col].value;
     const currentPlayer = this.players[this.turnCount%this.players.length];
     if (this.isCustom && this.turnCount < this.players.length) {
@@ -127,6 +128,11 @@ export class Game {
       this.canGoYet = true;
       console.log("Player went")
     }, this);
+  }
+
+  async pressed(col: number, row: number) {
+    if (this.disabledUserInteraction) return;
+    this.doMove(col, row);
   }
 
   async addMove(col: number, row: number, value: number) {
@@ -166,6 +172,7 @@ export class Game {
         console.timeEnd("AI Search");
 
         const bestMove = bestMoves[1][0];
+        console.log(bestMove);
         this.addMove(bestMove.col, bestMove.row, this.board[bestMove.row][bestMove.col].value)
         this.board = helpers.increase(bestMove.col, bestMove.row, this.board);
         const cycles = helpers.calculateCycles(structuredClone(this.board));
@@ -179,6 +186,7 @@ export class Game {
   }
 
   async gameOver(player: types.Player) {
+    if (this.disabledUserInteraction) return;
     if (this.isAi) {
       if (player.id == 0) this.gameOverText = "You Won!"
       else this.gameOverText = "AI Won!"
