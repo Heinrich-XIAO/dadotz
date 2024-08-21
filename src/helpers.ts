@@ -165,7 +165,7 @@ export function  minimax(position: types.Board, depth: number, isMax: boolean, m
 
     for (let i = 0; i < outcomes.length; i++) {
       const childEval = minimax(outcomes[i], depth - 1, false, maxPlayer, minPlayer, alpha, beta, difficulty);
-      const noisyEval = childEval[0] + (Math.random() - 0.5) * (10 - difficulty); // Adds a noise factor based on difficulty
+      const noisyEval = Math.max(0, childEval[0] + (Math.random() - 0.5) * (10 - difficulty));
 
       alpha = Math.max(alpha, noisyEval);
 
