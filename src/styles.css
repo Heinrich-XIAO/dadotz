@@ -241,17 +241,22 @@ div#content {
 }
 
 
-.sidebar *:hover:not(.profile_button) {
+.sidebar *:hover:not(div) {
   background-color: #555;
   color: white;
 }
 
-.sidebar form {
+.sidebar .div *:hover:not(.profile_button) {
+  background-color: #555;
+  color: white;
+}
+
+.sidebar div form, .sidebar div {
   padding: 0;
   width: auto;
 }
 
-.sidebar form button {
+.sidebar div form button {
   background-color: rgba(0, 0, 0, 0);
   background: none;
   border: none;
@@ -318,3 +323,40 @@ div#content {
   visibility: visible;
   opacity: 1
 }
+
+.gameDisplay {
+  background-color: #fff;
+  color: #000;
+  border-width: 0px;
+  border-radius: 10px;
+  width: 200px;
+  height: 100px;
+}
+
+.gameDisplay .metadata {
+  color: #333;
+  font-size: 13px;
+}
+
+.gameDisplay .title {
+  color: #000;
+  font-size: 16px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

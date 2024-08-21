@@ -1,0 +1,7 @@
+<div>
+  <div class="gameDisplay" *ngFor="let game of games" [routerLink]="'/view-game/' + game.id">
+    <span class="title">{{ game.winner }} Won!</span>
+    <br/>
+    <span class="metadata">AI Difficulty: {{ game.ai_difficulty.difficulty }}</span>
+  </div>
+</div>
