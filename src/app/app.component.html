@@ -6,8 +6,17 @@
     <form>
       <button (click)="signOut()" type="button">Logout</button>
     </form>
-    <div class="profile_button" *ngIf="userData != undefined && userData.user_metadata != undefined">
-      <img style="--avatar-size: 50px" class="avatar" [src]="userData.user_metadata['avatar_url']" alt="Your Profile Picture" referrerpolicy="no-referrer">
+    <div
+      class="profile_button"
+      *ngIf="userData != undefined && userData.user_metadata != undefined"
+    >
+      <img
+        style="--avatar-size: 50px"
+        class="avatar"
+        [src]="userData.user_metadata['avatar_url']"
+        alt="Your Profile Picture"
+        referrerpolicy="no-referrer"
+      />
     </div>
   </div>
 </div>

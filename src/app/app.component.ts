@@ -10,7 +10,7 @@ import { NgIf } from '@angular/common';
   standalone: true,
   imports: [RouterOutlet, Game, NgIf, RouterLink],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
   title = 'dadotz';
@@ -22,12 +22,14 @@ export class AppComponent {
       if (this.userData == null) {
         setTimeout(checkUserData, 100);
       }
-    }
-    setTimeout(checkUserData, 100)
+    };
+    setTimeout(checkUserData, 100);
   }
 
-  constructor(private auth: AuthService, private router: Router) {
-  }
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+  ) {}
 
   signOut() {
     this.auth.signOut();

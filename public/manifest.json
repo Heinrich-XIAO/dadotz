@@ -53,10 +53,7 @@
       "type": "image/png"
     }
   ],
-  "scope_extensions": [
-    {"origin": "dadotz.ca"},
-    {"origin": "*.dadotz.ca"}
-  ],
+  "scope_extensions": [{ "origin": "dadotz.ca" }, { "origin": "*.dadotz.ca" }],
   "categories": ["games", "entertainment"],
   "related_applications": [
     {

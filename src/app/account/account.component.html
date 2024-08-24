@@ -1,4 +1,8 @@
-<form [formGroup]="updateProfileForm" (ngSubmit)="updateProfile()" class="form-widget">
+<form
+  [formGroup]="updateProfileForm"
+  (ngSubmit)="updateProfile()"
+  class="form-widget"
+>
   <div>
     <label for="email">Email</label>
     <input id="email" type="text" [value]="session.user.email" disabled />
@@ -14,7 +18,7 @@
 
   <div>
     <button type="submit" class="button primary block" [disabled]="loading">
-      {{ loading ? 'Loading ...' : 'Update' }}
+      {{ loading ? "Loading ..." : "Update" }}
     </button>
   </div>
 

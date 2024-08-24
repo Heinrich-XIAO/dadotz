@@ -7,7 +7,7 @@ import { Game } from '../../app/game/game.component';
   standalone: true,
   imports: [RouterOutlet, Game],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
 })
 export class HomeComponent {
   title = 'home';

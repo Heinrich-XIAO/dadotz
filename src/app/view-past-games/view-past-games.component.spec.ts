@@ -8,9 +8,8 @@ describe('ViewPastGamesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewPastGamesComponent]
-    })
-    .compileComponents();
+      imports: [ViewPastGamesComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ViewPastGamesComponent);
     component = fixture.componentInstance;

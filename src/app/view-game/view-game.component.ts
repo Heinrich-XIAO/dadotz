@@ -12,7 +12,7 @@ import { Game } from '../game/game.component';
   standalone: true,
   imports: [CommonModule, Game],
   templateUrl: './view-game.component.html',
-  styleUrl: './view-game.component.css'
+  styleUrl: './view-game.component.css',
 })
 export class ViewGameComponent {
   @ViewChild('gameElement') gameElement!: Game;
@@ -20,15 +20,18 @@ export class ViewGameComponent {
   gameId: number | null = null;
   game: types.Game | null = null;
 
-  constructor(private supabase: SupabaseService, private auth: AuthService, private route: ActivatedRoute) {
-    this.route.paramMap.subscribe(params => {
+  constructor(
+    private supabase: SupabaseService,
+    private auth: AuthService,
+    private route: ActivatedRoute,
+  ) {
+    this.route.paramMap.subscribe((params) => {
       const gameId = params.get('game_id');
-      if (gameId)
-        this.gameId = +gameId;
+      if (gameId) this.gameId = +gameId;
       else return;
     });
     if (this.auth.user) {
-      this.initialize()
+      this.initialize();
     }
   }
 
@@ -51,7 +54,12 @@ export class ViewGameComponent {
       this.gameElement.players = this.gameElement.populatePlayers(2);
       this.gameElement.players[1].isAI = false;
     }
-    helpers.initializeBoardVariant(this.game?.startpos as string, this.gameElement.players.length, this.gameElement.board, this.gameElement.players)
+    helpers.initializeBoardVariant(
+      this.game?.startpos as string,
+      this.gameElement.players.length,
+      this.gameElement.board,
+      this.gameElement.players,
+    );
   }
 
   isActiveButton(isRight: boolean): boolean {
@@ -66,7 +74,5 @@ export class ViewGameComponent {
     this.gameElement.doMove(move.col, move.row);
   }
 
-  prev() {
-
-  }
+  prev() {}
 }
