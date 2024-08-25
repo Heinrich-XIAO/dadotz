@@ -250,10 +250,6 @@ div#content {
   height: 100%;
 }
 
-#container {
-  /* Your specific styling for the #container */
-}
-
 .sidebar * {
   display: block;
   color: white;
