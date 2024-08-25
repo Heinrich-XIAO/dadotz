@@ -13,11 +13,6 @@ html {
   font-family: "JetBrains Mono", monospace;
 }
 
-#content {
-  background-color: var(--color2);
-  height: 100%;
-}
-
 #container {
   display: inline-flex;
   height: 100%;
@@ -233,8 +228,30 @@ input[type="submit"] {
 }
 
 div#content {
-  width: calc(100% - 140px);
+  display: flex;
+  align-items: center; /* Vertically centers the content */
+  width: auto;
+  height: auto;
+  min-height: 100%;
+  background-color: var(--color2);
   margin-left: 140px;
+}
+
+#content {
+  width: auto;
+  height: auto;
+  min-height: 100%;
+  background-color: var(--color2);
+  margin-left: 140px;
+}
+
+#content > app-root {
+  margin: auto;
+  height: 100%;
+}
+
+#container {
+  /* Your specific styling for the #container */
 }
 
 .sidebar * {
@@ -333,8 +350,10 @@ div#content {
   color: #000;
   border-width: 0px;
   border-radius: 10px;
-  width: 200px;
-  height: 100px;
+  width: 180px;
+  height: 80px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .gameDisplay .metadata {
