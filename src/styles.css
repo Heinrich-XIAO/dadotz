@@ -352,6 +352,10 @@ div#content {
   margin-bottom: 10px;
 }
 
+.gameDisplay:last-child {
+  margin-bottom: 0px;
+}
+
 .gameDisplay .metadata {
   color: #333;
   font-size: 13px;
