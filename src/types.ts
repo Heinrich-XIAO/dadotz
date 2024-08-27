@@ -27,7 +27,7 @@ export type Game = {
   id: number;
   created_at: string;
   ended_at: string | null;
-  moves: Array<Move>;
+  moves: Move[];
   player: string;
   opponent: string | null;
   ai_difficulty: DifficultyObject;
@@ -35,4 +35,4 @@ export type Game = {
   startpos: string;
 };
 
-export type Board = Array<Array<Space>>;
+export type Board = Space[][];

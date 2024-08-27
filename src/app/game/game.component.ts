@@ -27,8 +27,8 @@ export class Game {
   gameOverScreen!: ElementRef<HTMLDialogElement>;
   @ViewChild('boardElement', { static: true }) boardElement!: ElementRef;
   @ViewChildren('gridSpace') gridSpaces!: QueryList<ElementRef>;
-  playerNames: Array<string> = ['red', 'blue', 'green', 'yellow'];
-  playerColors: Array<string> = ['#f54e42', '#4287f5', '#32a852', '#fcba03'];
+  playerNames: string[] = ['red', 'blue', 'green', 'yellow'];
+  playerColors: string[] = ['#f54e42', '#4287f5', '#32a852', '#fcba03'];
   isAi: boolean = false;
   boardWidth: number = 7;
   boardHeight: number = 7;
@@ -36,7 +36,7 @@ export class Game {
   players: types.Player[] = [];
   aiDifficulty: number = 2;
   startPosition: string = 'pickaxe';
-  board: Array<Array<types.Space>> = Array.from(
+  board: types.Space[][] = Array.from(
     { length: this.boardHeight },
     (_, row) =>
       Array.from({ length: this.boardWidth }, (_, col) => ({
@@ -113,7 +113,7 @@ export class Game {
     );
   }
 
-  populatePlayers(playerCount: number): Array<types.Player> {
+  populatePlayers(playerCount: number): types.Player[] {
     return Array.from({ length: playerCount }, (_, index: number) => ({
       id: index,
       color: this.playerColors[index],

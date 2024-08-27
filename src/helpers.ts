@@ -4,7 +4,7 @@ import { Game } from './app/game/game.component';
 export function setPlayer(
   col: number,
   row: number,
-  board: Array<Array<types.Space>>,
+  board: types.Space[][],
   player: types.Player | undefined,
 ) {
   const boardWidth = board[0].length;
@@ -18,7 +18,7 @@ export function setPlayer(
 export function increase(
   col: number,
   row: number,
-  board: Array<Array<types.Space>>,
+  board: types.Space[][],
 ) {
   const boardWidth = board[0].length;
   const boardHeight = board.length;
@@ -101,7 +101,7 @@ export function initializeBoardVariant(
 }
 
 export function renderCycles(
-  cycles: Array<Array<types.Space>>,
+  cycles: types.Space[][],
   callback: () => void,
   game: Game,
   callNextPlayer: boolean = true,
@@ -127,9 +127,9 @@ export function renderCycles(
 }
 
 export function calculateCycles(
-  board: Array<Array<types.Space>>,
-): Array<Array<types.Space>> {
-  const squaresToSplit: Array<types.Space> = board
+  board: types.Space[][],
+): types.Space[][] {
+  const squaresToSplit: types.Space[] = board
     .flat()
     .filter((space) => space.value == 4);
   for (let i = 0; i < squaresToSplit.length; i++)
@@ -140,8 +140,8 @@ export function calculateCycles(
 }
 
 export function calculateCycleResponse(
-  cycles: Array<Array<types.Space>>,
-  board: types.Board,
+  cycles: types.Space[][],
+  board: types.Board
 ) {
   if (cycles.length == 0) return;
   for (let i = 0; i < cycles[0].length; i++) {
@@ -164,7 +164,7 @@ export function isGameOver(
 export function getAllOfPlayer(
   board: types.Board,
   player: types.Player,
-): Array<types.Space> {
+): types.Space[] {
   return board.flatMap((row) =>
     row.filter(
       (cell) => cell.player && cell.player.id === player.id && cell.value !== 0,
@@ -225,19 +225,19 @@ export function minimax(
   alpha: number,
   beta: number,
   difficulty: number,
-): [number, Array<types.Space>] {
+): [number, types.Space[]] {
   if (depth == 0 || isGameOver(position, maxPlayer, minPlayer)) {
     return [staticEval(position, maxPlayer, minPlayer), []];
   }
 
   if (isMax) {
     let maxEval: number = -Infinity;
-    let bestMoveSequence: Array<types.Space> = [];
-    const possibleMoves: Array<types.Space> = getAllOfPlayer(
+    let bestMoveSequence: types.Space[] = [];
+    const possibleMoves: types.Space[] = getAllOfPlayer(
       position,
       maxPlayer,
     );
-    const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map(
+    const outcomes: types.Space[][][] = possibleMoves.map(
       (cell: types.Space) => checkResponse(position, cell),
     );
 
@@ -269,12 +269,12 @@ export function minimax(
     return [maxEval, bestMoveSequence];
   } else {
     let minEval: number = Infinity;
-    let bestMoveSequence: Array<types.Space> = [];
-    const possibleMoves: Array<types.Space> = getAllOfPlayer(
+    let bestMoveSequence: types.Space[] = [];
+    const possibleMoves: types.Space[] = getAllOfPlayer(
       position,
       minPlayer,
     );
-    const outcomes: Array<Array<Array<types.Space>>> = possibleMoves.map(
+    const outcomes: types.Space[][][] = possibleMoves.map(
       (cell: types.Space) => checkResponse(position, cell),
     );
 
