@@ -330,7 +330,7 @@ div#content {
   position: absolute;
   z-index: 1;
   right: 125%; /* Position above the question mark */
-  bottom: 0;
+  bottom: 2px;
   margin-left: -100px;
   opacity: 0;
   transition: opacity 0.3s;
