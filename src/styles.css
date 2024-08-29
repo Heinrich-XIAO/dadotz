@@ -215,7 +215,8 @@ input[type="submit"] {
   div#content {
     margin-left: 0 !important;
     width: 100% !important;
-    height: calc(100% - 55px);
+    height: calc(100% - 55px) !important;
+    min-height: calc(100% - 55px) !important;
   }
 
   .profile_button {
