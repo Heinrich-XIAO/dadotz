@@ -19,6 +19,7 @@ export class ViewGameComponent {
   players: types.Player[] = [];
   gameId: number | null = null;
   game: types.Game | null = null;
+  boardStates: types.Board[] = [];
 
   constructor(
     private supabase: SupabaseService,
@@ -60,6 +61,7 @@ export class ViewGameComponent {
       this.gameElement.board,
       this.gameElement.players,
     );
+    this.boardStates.push(structuredClone(this.gameElement.board));
   }
 
   isActiveButton(isRight: boolean): boolean {
@@ -71,8 +73,16 @@ export class ViewGameComponent {
   next() {
     if (!this.isActiveButton(true)) return;
     const move = this.game!.moves[this.gameElement.turnCount];
-    this.gameElement.doMove(move.col, move.row);
+    this.gameElement.doMove(move.col, move.row, () => {
+      this.boardStates.push(structuredClone(this.gameElement.board));
+      console.log(this.boardStates)
+    });
   }
 
-  prev() {}
+  prev() {
+    if (!this.isActiveButton(false)) return;
+    this.gameElement.turnCount--;
+    this.gameElement.board = this.boardStates[this.gameElement.turnCount];
+    console.log(this.gameElement.board)
+  }
 }

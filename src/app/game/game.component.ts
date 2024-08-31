@@ -152,7 +152,7 @@ export class Game {
     }
   }
 
-  async doMove(col: number, row: number) {
+  async doMove(col: number, row: number, callback: ()=>void = ()=>{}){
     const initialValue = this.board[row][col].value;
     const currentPlayer = this.players[this.turnCount % this.players.length];
     if (this.isCustom && this.turnCount < this.players.length) {
@@ -175,6 +175,7 @@ export class Game {
       () => {
         this.canGoYet = true;
         console.log('Player went');
+        callback();
       },
       this,
     );
