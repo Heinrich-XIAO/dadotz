@@ -246,7 +246,7 @@ div#content {
   margin-left: 140px;
 }
 
-#content > app-root {
+app-home {
   margin: auto;
   height: 100%;
 }
