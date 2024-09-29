@@ -66,3 +66,8 @@
   <br />
   <input (click)="aiOptionsSubmit()" type="submit" value="Submit" />
 </dialog>
+<dialog id="chillScreen" #chillScreen>
+  <span>{{ chillText }}</span>
+
+  <input (click)="chillScreen.close()" type="submit" value="Ok" />
+</dialog>

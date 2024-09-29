@@ -25,6 +25,8 @@ export class Game {
   aiOptionsScreen!: ElementRef<HTMLDialogElement>;
   @ViewChild('gameOverScreen', { static: true })
   gameOverScreen!: ElementRef<HTMLDialogElement>;
+  @ViewChild('chillScreen', { static: true })
+  chillScreen!: ElementRef<HTMLDialogElement>;
   @ViewChild('boardElement', { static: true }) boardElement!: ElementRef;
   @ViewChildren('gridSpace') gridSpaces!: QueryList<ElementRef>;
   playerNames: string[] = ['red', 'blue', 'green', 'yellow'];
@@ -53,6 +55,7 @@ export class Game {
   canGoYet: boolean = true;
   help: boolean = true;
   disabledUserInteraction: boolean = false;
+  chillText: string = '';
 
   constructor(
     private supabase: SupabaseService,
@@ -93,6 +96,35 @@ export class Game {
       this.players,
     );
   }
+
+  monitorFunction = (() => {
+    let callTimestamps: number[] = [];
+
+    return (fn: () => void) => {
+      const currentTime = Date.now();
+      callTimestamps.push(currentTime);
+
+      if (callTimestamps.length > 5) {
+        callTimestamps.shift();
+      }
+
+      if (callTimestamps.length >= 2) {
+        const timeDifferences = callTimestamps.map((t, i, arr) =>
+          i === 0 ? 0 : t - arr[i - 1]
+        );
+        const averageTimeBetweenCalls =
+          timeDifferences.slice(1).reduce((a, b) => a + b, 0) /
+          (timeDifferences.length - 1);
+
+        if (averageTimeBetweenCalls < 1000) {
+          this.chillScreen.nativeElement.showModal();
+          this.chillScreen.nativeElement.focus();
+          this.chillText = "Relax, this game is more strategic like a board game.";
+        }
+      }
+      fn();
+    };
+  })();
 
   start(playerCount: number) {
     if (playerCount == 1) {
@@ -162,7 +194,12 @@ export class Game {
       if (!this.canGoYet) return;
       if (!this.board[row][col].player) return;
       if (this.board[row][col].value >= 4) return;
-      if (currentPlayer.id == 1 && this.isAi) return;
+      if (currentPlayer.id == 1 && this.isAi) {
+        this.chillText = "The AI is thinking...";
+        this.chillScreen.nativeElement.showModal();
+        this.chillScreen.nativeElement.focus();
+        return;
+      }
       if (this.board[row][col].player.id != currentPlayer.id) return;
       if (this.board[row][col].value != 0) this.board[row][col].value++;
       else return;
@@ -183,7 +220,7 @@ export class Game {
 
   async pressed(col: number, row: number) {
     if (this.disabledUserInteraction) return;
-    this.doMove(col, row);
+    this.monitorFunction(() => this.doMove(col, row));
   }
 
   async addMove(col: number, row: number, value: number) {
