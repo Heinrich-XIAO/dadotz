@@ -4,7 +4,6 @@ import {
   ViewChild,
   ViewChildren,
   QueryList,
-  Pipe,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
