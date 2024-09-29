@@ -1,0 +1,7 @@
+{
+    "ignore": [
+        "./dist/*"
+    ],
+    "exec": "ng serve",
+    "ext": "js,html,css,jpg,png,gif,mp3,wav,webp,toml,ejs,json,mjs,md"
+}
