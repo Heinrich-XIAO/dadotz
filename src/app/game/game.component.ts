@@ -116,7 +116,7 @@ export class Game {
           timeDifferences.slice(1).reduce((a, b) => a + b, 0) /
           (timeDifferences.length - 1);
 
-        if (averageTimeBetweenCalls < 1000) {
+        if (averageTimeBetweenCalls < 500) {
           this.chillScreen.nativeElement.showModal();
           this.chillScreen.nativeElement.focus();
           this.chillText = "Relax, this game is more strategic like a board game.";
@@ -199,6 +199,12 @@ export class Game {
       if (this.board[row][col].value >= 4) return;
       if (currentPlayer.id == 1 && this.isAi) {
         this.chillText = "The AI is thinking...";
+        this.chillScreen.nativeElement.showModal();
+        this.chillScreen.nativeElement.focus();
+        return;
+      }
+      if ((this.board[row][col].player.id != currentPlayer.id) && this.isAi) {
+        this.chillText = "This is the AI's piece.";
         this.chillScreen.nativeElement.showModal();
         this.chillScreen.nativeElement.focus();
         return;
