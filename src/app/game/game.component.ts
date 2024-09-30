@@ -11,6 +11,7 @@ import { SupabaseService } from '../supabase.service';
 import { AuthService } from '../auth.service';
 import * as types from '../../types';
 import * as helpers from '../../helpers';
+import mixpanel from 'mixpanel-browser';
 
 @Component({
   selector: 'app-game',
@@ -181,6 +182,9 @@ export class Game {
     } else {
       this.gameId = null;
     }
+    mixpanel.track('New Game', {
+      'game_id': this.gameId
+    });
   }
 
   async doMove(col: number, row: number, callback: ()=>void = ()=>{}){
@@ -296,6 +300,10 @@ export class Game {
     if (this.isAi) {
       if (player.id == 0) this.gameOverText = 'You Won!';
       else this.gameOverText = 'AI Won!';
+      mixpanel.track('Game Ended', {
+        'status': player.id == 0 ? 'won' : 'lost',
+        'game_id': this.gameId,
+      });
     } else this.gameOverText = `${player.name} Won!`;
     this.gameOverScreen.nativeElement.showModal();
 

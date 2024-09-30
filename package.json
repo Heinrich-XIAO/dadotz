@@ -19,6 +19,8 @@
     "@angular/platform-browser-dynamic": "^18.1.0",
     "@angular/router": "^18.1.0",
     "@supabase/supabase-js": "2.43.1",
+    "@types/mixpanel-browser": "^2.50.0",
+    "mixpanel-browser": "^2.55.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

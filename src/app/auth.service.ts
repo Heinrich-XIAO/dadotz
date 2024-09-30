@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 import { SupabaseService } from './supabase.service';
+import mixpanel from 'mixpanel-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,9 @@ export class AuthService {
             if (session) this.user.next(session!.user);
           } else {
             this.user.next(null);
+          }
+          if (event === 'SIGNED_IN') {
+            mixpanel.track('Sign In');
           }
         });
     })();
