@@ -139,6 +139,16 @@ export function calculateCycles(
   return [squaresToSplit];
 }
 
+export function calculateCyclesBoard(board: types.Board): types.Board {
+  const splitableSquares: types.Space[] = board
+    .flat()
+    .filter((space) => space.value == 4);
+  if (splitableSquares.length == 0) return board;
+  for (let i = 0; i < splitableSquares.length; i++)
+    board = split(splitableSquares[i].col, splitableSquares[i].row, board);
+  return calculateCyclesBoard(board);
+}
+
 export function calculateCycleResponse(
   cycles: types.Space[][],
   board: types.Board

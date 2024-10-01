@@ -143,6 +143,12 @@ export class Game {
       this.board,
       this.players,
     );
+
+    // console.time('AI Search');
+    // for (let i = 0; i < 500; i++) {
+    //   helpers.minimax(this.board, 4, true, this.players[1], this.players[0], -Infinity, Infinity, this.aiDifficulty);
+    // }
+    // console.timeEnd('AI Search');
   }
 
   populatePlayers(playerCount: number): types.Player[] {
