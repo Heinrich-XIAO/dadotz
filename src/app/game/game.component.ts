@@ -310,7 +310,7 @@ export class Game {
         'status': player.id == 0 ? 'won' : 'lost',
         'game_id': this.gameId,
       });
-    } else this.gameOverText = `${player.name} Won!`;
+    } else this.gameOverText = `${player.name.toUpperCase()} Won!`;
     this.gameOverScreen.nativeElement.showModal();
 
     if (this.isAi && this.gameId) {
