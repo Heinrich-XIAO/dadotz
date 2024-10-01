@@ -252,10 +252,8 @@ export function minimax(
         beta,
         difficulty,
       );
-      const noisyEval = Math.max(
-        0,
-        childEval[0] + (Math.random() - 0.5) * (10 - difficulty),
-      );
+      const noisyEval =
+        childEval[0] + (Math.random() - 0.5) * (10 - difficulty)
 
       alpha = Math.max(alpha, noisyEval);
 
