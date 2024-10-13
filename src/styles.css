@@ -117,6 +117,8 @@ html {
 
 #startPosSelect {
   border-radius: 10px;
+  margin-top: 10px;
+  height: 30px;
 }
 
 .playerCountOption,
@@ -135,10 +137,6 @@ dialog {
 
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
-}
-
-#startPosSelect {
-  margin: auto;
 }
 
 #gameOverText {
