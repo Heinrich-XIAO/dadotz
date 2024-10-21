@@ -116,7 +116,7 @@ export class Game {
           timeDifferences.slice(1).reduce((a, b) => a + b, 0) /
           (timeDifferences.length - 1);
 
-        if (averageTimeBetweenCalls < 500) {
+        if (averageTimeBetweenCalls < 500 && this.isAi) {
           this.chillScreen.nativeElement.showModal();
           this.chillScreen.nativeElement.focus();
           this.chillText = "Relax, this game is more strategic like a board game.";
@@ -236,6 +236,13 @@ export class Game {
   async pressed(col: number, row: number) {
     if (this.disabledUserInteraction) return;
     this.monitorFunction(() => this.doMove(col, row));
+
+    while (true) {
+      if (helpers.getAllOfPlayer(this.board, this.players[this.turnCount % this.players.length]).length == 0) {
+        this.turnCount++;
+      }
+      break;
+    }
   }
 
   async addMove(col: number, row: number, value: number) {
