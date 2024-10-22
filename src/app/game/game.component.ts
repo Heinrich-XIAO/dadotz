@@ -12,6 +12,7 @@ import { AuthService } from '../auth.service';
 import * as types from '../../types';
 import * as helpers from '../../helpers';
 import mixpanel from 'mixpanel-browser';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-game',
@@ -60,6 +61,8 @@ export class Game {
   constructor(
     private supabase: SupabaseService,
     private auth: AuthService,
+    private appComponent: AppComponent
+
   ) {}
 
   ngAfterViewInit() {
@@ -136,6 +139,7 @@ export class Game {
     } else {
       this.players = this.populatePlayers(playerCount);
       this.isPlaying = true;
+      this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
     }
     helpers.initializeBoardVariant(
       this.startPosition,
@@ -165,6 +169,7 @@ export class Game {
 
     await this.makeNewGame();
     this.isPlaying = true;
+    this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
   }
 
   async makeNewGame() {
@@ -243,6 +248,8 @@ export class Game {
       }
       break;
     }
+
+    this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
   }
 
   async addMove(col: number, row: number, value: number) {

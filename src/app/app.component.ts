@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Game } from '../app/game/game.component';
 import { AuthService } from './auth.service';
@@ -16,6 +16,7 @@ import mixpanel from 'mixpanel-browser';
 export class AppComponent {
   title = 'dadotz';
   userData: User | undefined | null;
+  @ViewChild('content') content: any;
 
   ngAfterViewInit() {
     const checkUserData = () => {
