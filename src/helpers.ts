@@ -133,7 +133,7 @@ export function renderCycles(
       game.board = split(cycles[0][i].col, cycles[0][i].row, game.board);
     }
     renderCycles(cycles.slice(1), callback, game, callNextPlayer);
-  }, 250);
+  }, 400);
 }
 
 export function calculateCycles(

@@ -45,6 +45,7 @@ html {
   height: 10px;
   border-radius: 50%;
   position: absolute;
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out, background-color 0.3s ease;
 }
 
 .dots-1,
@@ -57,51 +58,120 @@ html {
 }
 
 .dots-1 .dot {
-  position: static;
+  position: absolute;
   display: block;
   margin: 0 auto;
 }
 
 .dots-2 .dot {
-  position: static;
+  position: relative;
   display: inline-block;
-  margin-right: 5px;
-  margin-left: 5px;
 }
 
-.dots-3 .dot:nth-child(2),
-.dots-3 .dot:nth-child(3) {
+/* only animate if it isn't .dontanimate */
+.dots-2.dontanimate .dot:first-child {
+  animation: dot1-to-2dots-dot1 0s ease-in-out forwards !important;
+}
+.dots-2.dontanimate .dot:nth-child(2) {
+  animation: dot1-to-2dots-dot2 0s ease-in-out forwards !important;
+}
+.dots-2 .dot:first-child {
+  animation: dot1-to-2dots-dot1 0.3s ease-in-out forwards;
+}
+.dots-2 .dot:nth-child(2) {
+  animation: dot1-to-2dots-dot2 0.3s ease-in-out forwards;
+}
+@keyframes dot1-to-2dots-dot1 {
+  0% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(15px);
+  }
+}
+
+@keyframes dot1-to-2dots-dot2 {
+  0% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(-15px);
+  }
+}
+
+.dots-3 .dot:first-child,
+.dots-3 .dot:nth-child(2) {
   position: static;
   transform: translateY(8.66025403784px);
   display: inline-block;
   margin-right: 5px;
   margin-left: 5px;
 }
-.dots-3 .dot:first-child {
+.dots-3 .dot:nth-child(3) {
   position: absolute;
   display: inline-block;
-  transform: translateY(-8.66025403784px);
+  animation: thirdDotOnTriDotFormation 0.3s ease-in-out forwards;
 }
 
-.dots-4 .dot {
-  position: fixed;
-  display: inline-block;
+@keyframes thirdDotOnTriDotFormation {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-8.66025403784px);
+  }
 }
 
-.dots-4 .dot:nth-child(1) {
-  transform: translate(-10px, -10px);
+.dots-4 .dot:first-child {
+  animation: dots-4-dot1 0.3s ease-in-out forwards;
 }
 
 .dots-4 .dot:nth-child(2) {
-  transform: translate(-10px, 10px);
+  animation: dots-4-dot2 0.3s ease-in-out forwards;
 }
 
 .dots-4 .dot:nth-child(3) {
-  transform: translate(10px, -10px);
+  animation: dots-4-dot3 0.3s ease-in-out forwards;
 }
 
 .dots-4 .dot:nth-child(4) {
-  transform: translate(10px, 10px);
+  animation: dots-4-dot4 0.3s ease-in-out forwards;
+}
+
+@keyframes dots-4-dot1 {
+  0% {
+    transform: translate(-10px, 8.66025403784px);
+  }
+  100% {
+    transform: translate(-10px, 10px);
+  }
+}
+
+@keyframes dots-4-dot2 {
+  0% {
+    transform: translate(10px, 8.66025403784px);
+  }
+  100% {
+    transform: translate(10px, 10px);
+  }
+}
+
+@keyframes dots-4-dot3 {
+  0% {
+    transform: translateY(-8.66025403784px);
+  }
+  100% {
+    transform: translate(10px, -10px);
+  }
+}
+
+@keyframes dots-4-dot4 {
+  0% {
+    transform: translateY(-8.66025403784px);
+  }
+  100% {
+    transform: translate(-10px, -10px);
+  }
 }
 
 .boardOptions {

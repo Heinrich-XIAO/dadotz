@@ -10,7 +10,7 @@
     <div
       [id]="i + '-' + j"
       #gridSpace
-      [class]="'gridSpace' + ' ' + 'dots-' + space.value"
+      [class]="'gridSpace' + ' ' + 'dots-' + space.value + ' ' + (turnCount == 0 ? 'dontanimate' : '')"
       (click)="pressed(j, i)"
       *ngFor="let space of row; index as j"
     >
