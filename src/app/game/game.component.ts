@@ -329,7 +329,7 @@ export class Game {
         'status': player.id == 0 ? 'won' : 'lost',
         'game_id': this.gameId,
       });
-    } else this.gameOverText = `${player.name.toUpperCase()} Won!`;
+    } else this.gameOverText = `${player.name.charAt(0).toUpperCase() + player.name.slice(1)} Won!`;
     this.gameOverScreen.nativeElement.showModal();
 
     if (this.isAi && this.gameId) {
