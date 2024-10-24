@@ -1,5 +1,6 @@
 <div class="sidebar">
-  <a routerLink="/">Home</a>
+  <a *ngIf="getPath() !== '/'" routerLink="/">Home</a>
+  <a *ngIf="getPath() === '/'" href="/">Home</a>
   <a *ngIf="userData == null" routerLink="/signup">Signup</a>
   <div *ngIf="userData != undefined">
     <a routerLink="/past-games">Past Games</a>

@@ -51,4 +51,9 @@ export class AppComponent {
     this.router.navigate(['/']);
     this.userData = null;
   }
+
+  getPath() {
+    console.log(globalThis.location.pathname)
+    return globalThis.location.pathname;
+  }
 }
