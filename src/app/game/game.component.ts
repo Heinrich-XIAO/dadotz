@@ -240,16 +240,15 @@ export class Game {
 
   async pressed(col: number, row: number) {
     if (this.disabledUserInteraction) return;
-    this.monitorFunction(() => this.doMove(col, row));
-
-    while (true) {
-      if (helpers.getAllOfPlayer(this.board, this.players[this.turnCount % this.players.length]).length == 0) {
-        this.turnCount++;
+    this.monitorFunction(() => this.doMove(col, row, () => {
+      while (true) {
+        if (helpers.getAllOfPlayer(this.board, this.players[this.turnCount % this.players.length]).length == 0) {
+          this.turnCount++;
+        }
+        break;
       }
-      break;
-    }
-
-    this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
+      this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
+    }));
   }
 
   async addMove(col: number, row: number, value: number) {
