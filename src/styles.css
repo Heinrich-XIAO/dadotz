@@ -107,6 +107,19 @@ html {
   margin-right: 5px;
   margin-left: 5px;
 }
+.dots-3 .dot:nth-child(2),
+.dots-3 .dot:first-child {
+  animation: bottomDots-to-topDots 0.3s ease-in-out forwards;
+}
+
+@keyframes bottomDots-to-topDots {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(8.66025403784px);
+  }
+}
 .dots-3 .dot:nth-child(3) {
   position: absolute;
   display: inline-block;
