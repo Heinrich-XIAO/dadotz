@@ -165,6 +165,9 @@ export class Game {
   }
 
   async aiOptionsSubmit() {
+    if (this.aiDifficulty < 1) this.aiDifficulty = 1;
+    else if (this.aiDifficulty > 10) this.aiDifficulty = 10;
+
     this.aiOptionsScreen.nativeElement.close();
 
     await this.makeNewGame();
