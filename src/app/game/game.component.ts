@@ -92,6 +92,7 @@ export class Game {
     this.turnCount = 0;
     this.gameOverText = '';
     this.gameOverScreen.nativeElement.close();
+    this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
     helpers.initializeBoardVariant(
       this.startPosition,
       this.players.length,
@@ -247,8 +248,9 @@ export class Game {
       while (true) {
         if (helpers.getAllOfPlayer(this.board, this.players[this.turnCount % this.players.length]).length == 0) {
           this.turnCount++;
+        } else {
+          break;
         }
-        break;
       }
       this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
     }));
@@ -333,6 +335,7 @@ export class Game {
         'game_id': this.gameId,
       });
     } else this.gameOverText = `${player.name.charAt(0).toUpperCase() + player.name.slice(1)} Won!`;
+    this.appComponent.content.nativeElement.style.removeProperty('background-color');
     this.gameOverScreen.nativeElement.showModal();
 
     if (this.isAi && this.gameId) {
