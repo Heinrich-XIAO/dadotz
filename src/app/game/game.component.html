@@ -39,13 +39,18 @@
       explodes, adding dotz to neighbors and taking over opponent's squares.
       Explosions can affect neighboring squares in one turn.</span
     >
-  </div>
+   </div>
   <br />
-  <select [(ngModel)]="startPosition" name="startPos" id="startPosSelect" aria-label="Start Position Selector">
-    <option value="pickaxe">The Pickaxe (recommended)</option>
-    <option value="corners">Corners</option>
-    <option value="custom">Fully Custom</option>
-  </select>
+  <div id="settingsParentDiv">
+    <button class="settings" (click)="openSettings()">
+      ⚙️
+    </button>
+  </div>
+  <!-- <select [(ngModel)]="startPosition" name="startPos" id="startPosSelect" aria-label="Start Position Selector"> -->
+  <!--   <option value="pickaxe">The Pickaxe (recommended)</option> -->
+  <!--   <option value="corners">Corners</option> -->
+  <!--   <option value="custom">Fully Custom</option> -->
+  <!-- </select> -->
 </div>
 <dialog #gameOverScreen>
   <span id="gameOverText">{{ gameOverText }}</span>
@@ -79,4 +84,30 @@
   <span>{{ chillText }}</span>
 
   <input (click)="chillScreen.close()" type="submit" value="Ok" />
+</dialog>
+
+
+<dialog id="settingsMenuForGame" #gameSettings>
+  <span>Settings</span>
+
+  <div class="settingOption">
+    <span>Starting Position: </span>
+    <select [(ngModel)]="startPosition" name="startPos" id="startPosSelect" aria-label="Start Position Selector">
+      <option value="pickaxe">The Pickaxe (recommended)</option>
+      <option value="corners">Corners</option>
+      <option value="custom">Fully Custom</option>
+    </select>
+  </div>
+
+  <div class="settingOption">
+    <span>Width: </span>
+    <input type="number" value="7" min="7" max="15" [(ngModel)]="boardWidth"/>
+  </div>
+
+  <div class="settingOption">
+    <span>Height: </span>
+    <input type="number" value="7" min="7" max="15" [(ngModel)]="boardHeight"/>
+  </div>
+
+  <input (click)="gameSettings.close()" type="submit" value="Confirm" />
 </dialog>

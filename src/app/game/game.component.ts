@@ -28,6 +28,8 @@ export class Game {
   gameOverScreen!: ElementRef<HTMLDialogElement>;
   @ViewChild('chillScreen', { static: true })
   chillScreen!: ElementRef<HTMLDialogElement>;
+  @ViewChild('gameSettings', { static: true })
+  gameSettingsDialog!: ElementRef<HTMLDialogElement>;
   @ViewChild('boardElement', { static: true }) boardElement!: ElementRef;
   @ViewChildren('gridSpace') gridSpaces!: QueryList<ElementRef>;
   playerNames: string[] = ['red', 'blue', 'green', 'yellow'];
@@ -131,6 +133,24 @@ export class Game {
   })();
 
   start(playerCount: number) {
+    if (this.boardWidth > 15 || this.boardHeight > 15) {
+      alert("board width/height cannot be more than 15 defaulting to 15");
+      if (this.boardHeight > 15) this.boardHeight = 15;
+      if (this.boardWidth  > 15) this.boardWidth = 15;
+    }
+    if (this.boardWidth < 7 || this.boardHeight < 7) {
+      alert("board width/height cannot be less than 7 defaulting to 7");
+      if (this.boardHeight < 7) this.boardHeight = 7;
+      if (this.boardWidth  < 7) this.boardWidth = 7;
+    }
+    this.board = Array.from(
+      { length: this.boardHeight },
+      (_, row) => Array.from({ length: this.boardWidth }, (_, col) => ({
+        col,
+        row,
+        value: 0,
+      })),
+    );
     if (playerCount == 1) {
       this.aiOptionsScreen.nativeElement.showModal();
       this.aiOptionsScreen.nativeElement.focus();
@@ -355,5 +375,9 @@ export class Game {
 
   evalBarWidth() {
     return helpers.evalBarWidth(this);
+  }
+
+  openSettings() {
+    this.gameSettingsDialog.nativeElement.showModal();
   }
 }

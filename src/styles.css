@@ -190,6 +190,7 @@ html {
 .boardOptions {
   display: inline-flex;
   justify-content: center;
+  position: relative;
 }
 
 .playerCountOption {
@@ -200,7 +201,6 @@ html {
 
 #startPosSelect {
   border-radius: 10px;
-  margin-top: 10px;
   height: 30px;
 }
 
@@ -454,3 +454,42 @@ app-home {
   width: 500px;
 }
 
+.settings {
+  background-color: #00000000;
+  border-width: 0px;
+  padding: 0px;
+  font-size: 52pt;
+}
+
+.settingsParentDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#settingsMenuForGame {
+  width: 50%;
+  max-width: 500px;
+  height: 50%;
+}
+
+#settingsMenuForGame input[type="submit"] {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.settingOption {
+  width: 100%;
+  clear: both;
+}
+
+.settingOption span {
+  display: inline;
+  vertical-align: middle;
+}
+
+.settingOption *:nth-child(2) {
+  display: inline;
+  vertical-align: middle;
+}
