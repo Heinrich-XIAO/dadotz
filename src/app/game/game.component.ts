@@ -14,6 +14,53 @@ import * as helpers from '../../helpers';
 import mixpanel from 'mixpanel-browser';
 import { AppComponent } from '../app.component';
 
+const difficultyTable = [
+  {
+    searchDepth: 1,
+    randomness: 1
+  },
+  {
+    searchDepth: 1,
+    randomness: 0.5
+  },
+  {
+    searchDepth: 1,
+    randomness: 0
+  },
+  {
+    searchDepth: 2,
+    randomness: 0.5
+  },
+  {
+    searchDepth: 2,
+    randomness: 0
+  },
+  {
+    searchDepth: 3,
+    randomness: 0.5
+  },
+  {
+    searchDepth: 3,
+    randomness: 0
+  },
+  {
+    searchDepth: 4,
+    randomness: 0.5
+  },
+  {
+    searchDepth: 4,
+    randomness: 0.25
+  },
+  {
+    searchDepth: 4,
+    randomness: 0.125
+  },
+  {
+    searchDepth: 4,
+    randomness: 0
+  }
+];
+
 @Component({
   selector: 'app-game',
   standalone: true,
@@ -309,21 +356,30 @@ export class Game {
     }
     if (this.isAi && this.turnCount % 2 == 1) {
       setTimeout(() => {
-        console.time('AI Search');
-        const bestMoves = helpers.minimax(
-          structuredClone(this.board),
-          4,
-          true,
-          this.players[1],
-          this.players[0],
-          -Infinity,
-          Infinity,
-          this.aiDifficulty,
-        );
-        console.timeEnd('AI Search');
+        let bestMoves: [number, types.Space[]];
+        console.log(this.aiDifficulty)
+        if (Math.random() < difficultyTable[this.aiDifficulty].randomness) {
+          const possibleMoves: types.Space[] = helpers.getAllOfPlayer(
+            this.board,
+            this.players[1],
+          );
+          bestMoves = [0, [possibleMoves[Math.floor(Math.random()*possibleMoves.length)]]];
+        } else {
+          console.time('AI Search');
+          bestMoves = helpers.minimax(
+            structuredClone(this.board),
+            difficultyTable[this.aiDifficulty].searchDepth,
+            true,
+            this.players[1],
+            this.players[0],
+            -Infinity,
+            Infinity,
+            10,
+          );
+          console.timeEnd('AI Search');
+        }
 
         const bestMove = bestMoves[1][0];
-        console.log(bestMove);
         this.addMove(
           bestMove.col,
           bestMove.row,

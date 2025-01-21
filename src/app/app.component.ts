@@ -53,7 +53,6 @@ export class AppComponent {
   }
 
   getPath() {
-    console.log(globalThis.location.pathname)
     return globalThis.location.pathname;
   }
 }
