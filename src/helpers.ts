@@ -64,25 +64,25 @@ export function initializeBoardVariant(
     split(1, 0, board);
 
     if (playerCount == 2) {
-      board[boardWidth - 2][boardHeight - 2].player = structuredClone(players[1]);
+      board[boardHeight - 2][boardWidth - 2].player = structuredClone(players[1]);
       split(boardWidth - 2, boardHeight - 2, board);
       split(boardWidth - 1, boardHeight - 2, board);
       split(boardWidth - 2, boardHeight - 1, board);
     }
 
     if (playerCount >= 3) {
-      board[1][boardHeight - 2].player = structuredClone(players[1]);
+      board[1][boardWidth - 2].player = structuredClone(players[1]);
       split(boardWidth - 2, 1, board);
       split(boardWidth - 1, 1, board);
       split(boardWidth - 2, 0, board);
-      board[boardWidth - 2][boardHeight - 2].player = structuredClone(players[2]);
+      board[boardHeight - 2][boardWidth - 2].player = structuredClone(players[2]);
       split(boardWidth - 2, boardHeight - 2, board);
       split(boardWidth - 1, boardHeight - 2, board);
       split(boardWidth - 2, boardHeight - 1, board);
     }
 
     if (playerCount >= 4) {
-      board[boardWidth - 2][1].player = structuredClone(players[3]);
+      board[boardHeight - 2][1].player = structuredClone(players[3]);
       split(1, boardHeight - 2, board);
       split(0, boardHeight - 2, board);
       split(1, boardHeight - 1, board);
@@ -92,19 +92,19 @@ export function initializeBoardVariant(
     split(1, 1, board);
 
     if (playerCount == 2) {
-      board[boardWidth - 2][boardHeight - 2].player = structuredClone(players[1]);
+      board[boardHeight - 2][boardWidth - 2].player = structuredClone(players[1]);
       split(boardWidth - 2, boardHeight - 2, board);
     }
 
     if (playerCount >= 3) {
-      board[1][boardHeight - 2].player = structuredClone(players[1]);
+      board[1][boardWidth - 2].player = structuredClone(players[1]);
       split(boardWidth - 2, 1, board);
-      board[boardWidth - 2][boardHeight - 2].player = structuredClone(players[2]);
+      board[boardHeight - 2][boardWidth - 2].player = structuredClone(players[2]);
       split(boardWidth - 2, boardHeight - 2, board);
     }
 
     if (playerCount >= 4) {
-      board[boardWidth - 2][1].player = structuredClone(players[3]);
+      board[boardHeight - 2][1].player = structuredClone(players[3]);
       split(1, boardHeight - 2, board);
     }
   }
