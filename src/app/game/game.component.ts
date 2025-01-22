@@ -355,6 +355,7 @@ export class Game {
       return;
     }
     if (this.isAi && this.turnCount % 2 == 1) {
+      this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
       setTimeout(() => {
         let bestMoves: [number, types.Space[]];
         console.log(this.aiDifficulty)
@@ -391,6 +392,7 @@ export class Game {
         helpers.renderCycles(
           cycles,
           () => {
+            this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
             console.log('ai went');
             this.canGoYet = true;
           },
