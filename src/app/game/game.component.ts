@@ -382,13 +382,13 @@ export class Game {
           //   Infinity,
           //   10,
           // );
-          const response = await fetch('https://express.dadotz.ca/api/aiMove', {
+          const response = await fetch('https://dadotzaiserverless.vercel.app/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               board: this.board,
               players: this.players,
-              searchDepth: difficultyTable[this.aiDifficulty].searchDepth
+              depth: difficultyTable[this.aiDifficulty].searchDepth
             })
           });
           const json: aiMoveResponse = await response.json();
