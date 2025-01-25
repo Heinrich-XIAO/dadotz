@@ -61,6 +61,11 @@ const difficultyTable = [
   }
 ];
 
+interface aiMoveResponse {
+  success: boolean;
+  bestMoves: [number, types.Space[]]
+}
+
 @Component({
   selector: 'app-game',
   standalone: true,
@@ -356,7 +361,7 @@ export class Game {
     }
     if (this.isAi && this.turnCount % 2 == 1) {
       this.appComponent.content.nativeElement.style.backgroundColor = this.players[this.turnCount % this.players.length].color;
-      setTimeout(() => {
+      setTimeout(async () => {
         let bestMoves: [number, types.Space[]];
         console.log(this.aiDifficulty)
         if (Math.random() < difficultyTable[this.aiDifficulty].randomness) {
@@ -367,16 +372,30 @@ export class Game {
           bestMoves = [0, [possibleMoves[Math.floor(Math.random()*possibleMoves.length)]]];
         } else {
           console.time('AI Search');
-          bestMoves = helpers.minimax(
-            structuredClone(this.board),
-            difficultyTable[this.aiDifficulty].searchDepth,
-            true,
-            this.players[1],
-            this.players[0],
-            -Infinity,
-            Infinity,
-            10,
-          );
+          // bestMoves = helpers.minimax(
+          //   structuredClone(this.board),
+          //   difficultyTable[this.aiDifficulty].searchDepth,
+          //   true,
+          //   this.players[1],2
+          //   this.players[0],
+          //   -Infinity,
+          //   Infinity,
+          //   10,
+          // );
+          const response = await fetch('https://express.dadotz.ca/api/aiMove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              board: this.board,
+              players: this.players,
+              searchDepth: difficultyTable[this.aiDifficulty].searchDepth
+            })
+          });
+          const json: aiMoveResponse = await response.json();
+          console.log(json);
+
+          bestMoves = json['bestMoves'];
+
           console.timeEnd('AI Search');
         }
 
